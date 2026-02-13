@@ -3,6 +3,8 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { sendEmail } from "./send-email";
+import BudgetAlertEmail from "@/emails/budget-alert";
 
 export async function getCurrentBudget(accountId) {
   try {
@@ -51,11 +53,80 @@ export async function getCurrentBudget(accountId) {
       },
     });
 
+    const currentExpenses = expenses._sum.amount
+      ? expenses._sum.amount.toNumber()
+      : 0;
+
+    // Check if budget is exceeded and send alert
+    if (budget && currentExpenses > budget.amount.toNumber()) {
+      console.log("[Budget Alert] Expenses exceeded budget:", {
+        budgetAmount: budget.amount.toNumber(),
+        currentExpenses,
+        userEmail: user.email,
+      });
+
+      const now = new Date();
+      const lastAlert = budget.lastAlertSent
+        ? new Date(budget.lastAlertSent)
+        : null;
+      const hoursSinceLastAlert = lastAlert
+        ? (now - lastAlert) / (1000 * 60 * 60)
+        : null;
+
+      // Send alert only if last alert was more than 24 hours ago
+      if (!lastAlert || hoursSinceLastAlert > 24) {
+        try {
+          // Validate email before sending
+          if (!user.email || user.email.trim() === "") {
+            console.warn("[Budget Alert] User email not set. Skipping email alert.");
+            return {
+              budget: budget ? { ...budget, amount: budget.amount.toNumber() } : null,
+              currentExpenses,
+            };
+          }
+
+          console.log("[Budget Alert] Sending email to:", user.email);
+          const emailResponse = await sendEmail({
+            to: user.email,
+            subject: "Budget Alert: You've exceeded your budget!",
+            react: BudgetAlertEmail({
+              userName: user.name,
+              budgetAmount: budget.amount.toNumber(),
+              currentExpenses,
+              percentageExceeded: Math.round(
+                ((currentExpenses - budget.amount.toNumber()) /
+                  budget.amount.toNumber()) *
+                  100
+              ),
+            }),
+          });
+
+          if (!emailResponse.success) {
+            console.error("[Budget Alert] Email send failed:", emailResponse.error);
+            return {
+              budget: budget ? { ...budget, amount: budget.amount.toNumber() } : null,
+              currentExpenses,
+              emailError: emailResponse.error,
+            };
+          }
+
+          // Update last alert sent time
+          await db.budget.update({
+            where: { userId: user.id },
+            data: { lastAlertSent: now },
+          });
+          console.log("[Budget Alert] Email sent successfully:", emailResponse.data);
+        } catch (emailError) {
+          console.error("[Budget Alert] Error sending email:", emailError);
+        }
+      } else {
+        console.log("[Budget Alert] Alert already sent in the last 24 hours");
+      }
+    }
+
     return {
       budget: budget ? { ...budget, amount: budget.amount.toNumber() } : null,
-      currentExpenses: expenses._sum.amount
-        ? expenses._sum.amount.toNumber()
-        : 0,
+      currentExpenses,
     };
   } catch (error) {
     console.error("Error fetching budget:", error);

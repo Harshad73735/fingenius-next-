@@ -3,9 +3,9 @@ import { BarLoader } from 'react-spinners';
 
 const DashboardLayout = ({ children }) => {
   return (
-    <div className="px-5">
+    <div className="px-5 bg-white dark:bg-slate-900 min-h-screen">
       <div className="flex items-center justify-between mb-5">
-        <h1 className="text-6xl font-bold tracking-tight gradient-title">
+        <h1 className="text-6xl font-bold tracking-tight gradient-title dark:text-white">
           Dashboard
         </h1>
       </div>

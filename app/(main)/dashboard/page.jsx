@@ -7,9 +7,11 @@ import AccountCard from './_components/account-card'
 import { getCurrentBudget } from '@/actions/budget'
 import BudgetProgress from './_components/budget-progress'
 import DashboardOverview from './_components/transactions-overview'
+import { checkUser } from '@/lib/checkUser'
+import { ProfileUpdateForm } from '@/components/profile-update-form'
 
 const DashboardPage = async() => {
-  await checkUser(); // Ensure user exists in DB
+  const user = await checkUser(); // Ensure user exists in DB
   const [accounts, transactions] = await Promise.all([
     getUserAccounts(),
     getDashboardData(),
@@ -25,6 +27,9 @@ const DashboardPage = async() => {
 
   return (
     <div className="px-5">
+       {/* Profile Update Form Alert */}
+       <ProfileUpdateForm userData={user} />
+
        {/* Budget Progress */}
        
       <BudgetProgress
@@ -58,6 +63,5 @@ const DashboardPage = async() => {
     </div>
   )
 }
-import { checkUser } from '@/lib/checkUser'
 
 export default DashboardPage

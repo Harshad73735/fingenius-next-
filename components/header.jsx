@@ -4,13 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
-import { LayoutDashboard, PenBox } from "lucide-react";
+import { LayoutDashboard, PenBox, Moon, Sun } from "lucide-react";
 import { checkUser } from "@/lib/checkUser";
+import { ThemeToggleWrapper } from "./theme-toggle-wrapper";
 
 const Header = async () => {
   await checkUser
   return (
-    <div className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
+    <div className="fixed top-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-50 border-b dark:border-slate-700">
         <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
             <Link href="/">
             <Image src={"/logo.png"} alt="FinGenius Logo" height={60} width={200} className="h-12 w-auto object-contain"/></Link>
@@ -39,6 +40,7 @@ const Header = async () => {
 </SignedOut>
 
        <SignedIn>
+        <ThemeToggleWrapper />
         <UserButton appearance={{
                 elements: {
                   avatarBox: "w-10 h-10",

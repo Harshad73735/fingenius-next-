@@ -175,3 +175,40 @@ export async function updateDefaultAccount(accountId) {
     return { success: false, error: error.message };
   }
 }
+
+export async function updateUserProfile({ email, name }) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    // Update user profile
+    const updatedUser = await db.user.update({
+      where: { id: user.id },
+      data: {
+        email: email || user.email,
+        name: name || user.name,
+      },
+    });
+
+    console.log("[updateUserProfile] User updated:", {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      name: updatedUser.name,
+    });
+
+    revalidatePath("/dashboard");
+    return {
+      success: true,
+      data: updatedUser,
+    };
+  } catch (error) {
+    console.error("[updateUserProfile] Error:", error.message);
+    return { success: false, error: error.message };
+  }
+}
