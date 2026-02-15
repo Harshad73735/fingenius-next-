@@ -241,6 +241,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
               mode="single"
               selected={date}
               onSelect={(date) => setValue("date", date)}
+              defaultMonth={date || new Date()}
               disabled={(date) =>
                 date > new Date() || date < new Date("1900-01-01")
               }
