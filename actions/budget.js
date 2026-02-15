@@ -152,6 +152,7 @@ export async function updateBudget(amount) {
       },
       update: {
         amount,
+        lastAlertSent: null, // Reset alert timer so new alert can be sent
       },
       create: {
         userId: user.id,

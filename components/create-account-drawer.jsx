@@ -62,22 +62,23 @@ const CreateAccountDrawer = ({children}) => {
   return (
      <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="dark:bg-slate-800 dark:border-slate-700">
         <DrawerHeader>
-          <DrawerTitle>Create New Account</DrawerTitle>
+          <DrawerTitle className="text-foreground dark:text-white">Create New Account</DrawerTitle>
         </DrawerHeader>
         <div className="px-4 pb-4">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <label
                 htmlFor="name"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground dark:text-slate-200"
               >
                 Account Name
               </label>
               <Input
                 id="name"
                 placeholder="e.g., Main Checking"
+                className="dark:bg-slate-700 dark:border-slate-600 dark:text-white"
                 {...register("name")}
               />
               {errors.name && (
@@ -88,7 +89,7 @@ const CreateAccountDrawer = ({children}) => {
             <div className="space-y-2">
               <label
                 htmlFor="type"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground dark:text-slate-200"
               >
                 Account Type
               </label>
@@ -96,10 +97,10 @@ const CreateAccountDrawer = ({children}) => {
                 onValueChange={(value) => setValue("type", value)}
                 defaultValue={watch("type")}
               >
-                <SelectTrigger id="type">
+                <SelectTrigger id="type" className="dark:bg-slate-700 dark:border-slate-600 dark:text-white">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="dark:bg-slate-700 dark:border-slate-600">
                   <SelectItem value="CURRENT">Current</SelectItem>
                   <SelectItem value="SAVINGS">Savings</SelectItem>
                 </SelectContent>
@@ -112,7 +113,7 @@ const CreateAccountDrawer = ({children}) => {
             <div className="space-y-2">
               <label
                 htmlFor="balance"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground dark:text-slate-200"
               >
                 Initial Balance
               </label>
@@ -121,6 +122,7 @@ const CreateAccountDrawer = ({children}) => {
                 type="number"
                 step="0.01"
                 placeholder="0.00"
+                className="dark:bg-slate-700 dark:border-slate-600 dark:text-white"
                 {...register("balance")}
               />
               {errors.balance && (
@@ -128,15 +130,15 @@ const CreateAccountDrawer = ({children}) => {
               )}
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border p-3">
+            <div className="flex items-center justify-between rounded-lg border p-3 dark:border-slate-600 dark:bg-slate-700">
               <div className="space-y-0.5">
                 <label
                   htmlFor="isDefault"
-                  className="text-base font-medium cursor-pointer"
+                  className="text-base font-medium cursor-pointer text-foreground dark:text-white"
                 >
                   Set as Default
                 </label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground dark:text-slate-400">
                   This account will be selected by default for transactions
                 </p>
               </div>

@@ -21,20 +21,20 @@ export default async function AccountPage({ params }) {
     <div className="space-y-8 px-5">
       <div className="flex gap-4 items-end justify-between">
         <div>
-          <h1 className="text-5xl sm:text-6xl font-bold tracking-tight gradient-title capitalize">
+          <h1 className="text-5xl sm:text-6xl font-bold tracking-tight gradient-title capitalize text-foreground dark:text-white">
             {account.name}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground dark:text-slate-400">
             {account.type.charAt(0) + account.type.slice(1).toLowerCase()}
             Account
           </p>
         </div>
 
         <div className="text-right pb-2">
-          <div className="text-xl sm:text-2xl font-bold">
+          <div className="text-xl sm:text-2xl font-bold text-foreground dark:text-white">
             ${parseFloat(account.balance).toFixed(2)}
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground dark:text-slate-400">
             {account._count.transactions} Transactions
           </p>
         </div>

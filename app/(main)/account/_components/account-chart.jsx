@@ -117,17 +117,21 @@ const AccountChart = ({ transactions }) => {
               data={filteredData}
               margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
               <XAxis
                 dataKey="date"
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
+                stroke="hsl(var(--muted-foreground))"
+                style={{ fontSize: "12px", fill: "hsl(var(--muted-foreground))" }}
               />
               <YAxis
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
+                stroke="hsl(var(--muted-foreground))"
+                style={{ fontSize: "12px", fill: "hsl(var(--muted-foreground))" }}
                 tickFormatter={(value) => `$${value}`}
               />
               <Tooltip

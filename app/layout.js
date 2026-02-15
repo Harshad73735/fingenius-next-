@@ -14,9 +14,15 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-     <ClerkProvider>
+     <ClerkProvider
+      appearance={{
+        variables: {
+          colorPrimary: "#9333ea",
+        },
+      }}
+    >
     <ThemeProvider>
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.className} bg-white dark:bg-slate-900 text-black dark:text-white transition-colors duration-300`}
       >

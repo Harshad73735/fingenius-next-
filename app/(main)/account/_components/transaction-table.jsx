@@ -194,11 +194,11 @@ const TransactionTable = ({transactions}) => {
 
 
         {/* Transactions Table */}
-      <div className="rounded-md border">
+      <div className="rounded-md border dark:border-slate-700">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[50px]">
+          <TableHeader className="bg-slate-50 dark:bg-slate-800">
+            <TableRow className="border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+              <TableHead className="w-[50px] text-foreground dark:text-slate-200">
                 <Checkbox checked={
                     selectedIds.length === filteredAndSortedTransactions.length &&
                     filteredAndSortedTransactions.length > 0
@@ -206,7 +206,7 @@ const TransactionTable = ({transactions}) => {
                   onCheckedChange={handleSelectAll}                             />
               </TableHead>
               <TableHead
-                className="cursor-pointer"
+                className="cursor-pointer text-foreground dark:text-slate-200"
                 onClick={() => handleSort("date")}
               >
                 <div className="flex items-center">
@@ -219,9 +219,9 @@ const TransactionTable = ({transactions}) => {
                     ))}
                 </div>
               </TableHead>
-              <TableHead>Description</TableHead>
+              <TableHead className="text-foreground dark:text-slate-200">Description</TableHead>
               <TableHead
-                className="cursor-pointer"
+                className="cursor-pointer text-foreground dark:text-slate-200"
                 onClick={() => handleSort("category")}
               >
                 <div className="flex items-center">
@@ -235,7 +235,7 @@ const TransactionTable = ({transactions}) => {
                 </div>
               </TableHead>
               <TableHead
-                className="cursor-pointer text-right"
+                className="cursor-pointer text-right text-foreground dark:text-slate-200"
                 onClick={() => handleSort("amount")}
               >
                 <div className="flex items-center justify-end">
@@ -255,10 +255,10 @@ const TransactionTable = ({transactions}) => {
          
   <TableBody>
 {filteredAndSortedTransactions.length===0?(
-  <TableRow>
+  <TableRow className="hover:bg-slate-50 dark:hover:bg-slate-800">
                 <TableCell
                   colSpan={7}
-                  className="text-center text-muted-foreground"
+                  className="text-center text-muted-foreground dark:text-slate-400 py-8"
                 >
                   No transactions found
                 </TableCell>
@@ -266,21 +266,21 @@ const TransactionTable = ({transactions}) => {
 ): (
   filteredAndSortedTransactions.map((transaction)=>{
     return(
-<TableRow key={transaction.id}>
+<TableRow key={transaction.id} className="border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
       <TableCell className="font-medium">
          <Checkbox
                       checked={selectedIds.includes(transaction.id)}
                       onCheckedChange={() => handleSelect(transaction.id)}
                     />
       </TableCell>
-      <TableCell>{format(new Date(transaction.date), "PP")}</TableCell>
-      <TableCell>{transaction.description}</TableCell>
+      <TableCell className="text-foreground dark:text-slate-100">{format(new Date(transaction.date), "PP")}</TableCell>
+      <TableCell className="text-foreground dark:text-slate-100">{transaction.description}</TableCell>
       <TableCell className="capitalize">
                     <span
                       style={{
                         background: categoryColors[transaction.category],
                       }}
-                      className="px-2 py-1 rounded text-white text-sm"
+                      className="px-2 py-1 rounded text-white text-sm font-medium"
                     >
                       {transaction.category}
                     </span>
@@ -289,8 +289,8 @@ const TransactionTable = ({transactions}) => {
                     className={cn(
                       "text-right font-medium",
                       transaction.type === "EXPENSE"
-                        ? "text-red-500"
-                        : "text-green-500"
+                        ? "text-red-500 dark:text-red-400"
+                        : "text-green-500 dark:text-green-400"
                     )}
                   >
                     {transaction.type === "EXPENSE" ? "-" : "+"}$

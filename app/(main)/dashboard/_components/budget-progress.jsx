@@ -58,10 +58,10 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
   }, [error]);
 
   return (
-     <Card>
+     <Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex-1">
-          <CardTitle className="text-sm font-medium">
+          <CardTitle className="text-sm font-medium text-foreground dark:text-white">
             Monthly Budget (Default Account)
           </CardTitle>
           <div className="flex items-center gap-2 mt-1">
@@ -71,7 +71,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
                   type="number"
                   value={newBudget}
                   onChange={(e) => setNewBudget(e.target.value)}
-                  className="w-32"
+                  className="w-32 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
                   placeholder="Enter amount"
                   autoFocus
                   disabled={isLoading}
@@ -95,7 +95,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
               </div>
             ) : (
               <>
-                <CardDescription>
+                <CardDescription className="dark:text-slate-400">
                   {initialBudget
                     ? `$${currentExpenses.toFixed(
                         2
@@ -129,7 +129,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
                     : "bg-green-500"
               }`}
             />
-            <p className="text-xs text-muted-foreground text-right">
+            <p className="text-xs text-muted-foreground dark:text-slate-400 text-right">
               {percentUsed.toFixed(1)}% used
             </p>
           </div>

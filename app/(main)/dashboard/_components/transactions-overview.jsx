@@ -60,19 +60,19 @@ const currentDate = new Date();
   return (
       <div className="grid gap-4 md:grid-cols-2">
       {/* Recent Transactions Card */}
-      <Card>
+      <Card className="dark:bg-slate-800 dark:border-slate-700">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle className="text-base font-normal">
+          <CardTitle className="text-base font-normal text-foreground dark:text-white">
             Recent Transactions
           </CardTitle>
           <Select
             value={selectedAccountId}
             onValueChange={setSelectedAccountId}
           >
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] dark:bg-slate-700 dark:border-slate-600 dark:text-white">
               <SelectValue placeholder="Select account" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="dark:bg-slate-700 dark:border-slate-600">
               {accounts.map((account) => (
                 <SelectItem key={account.id} value={account.id}>
                   {account.name}
@@ -84,7 +84,7 @@ const currentDate = new Date();
         <CardContent>
           <div className="space-y-4">
             {recentTransactions.length === 0 ? (
-              <p className="text-center text-muted-foreground py-4">
+              <p className="text-center text-muted-foreground dark:text-slate-400 py-4">
                 No recent transactions
               </p>
             ) : (
@@ -94,10 +94,10 @@ const currentDate = new Date();
                   className="flex items-center justify-between"
                 >
                   <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">
+                    <p className="text-sm font-medium leading-none text-foreground dark:text-white">
                       {transaction.description || "Untitled Transaction"}
                     </p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground dark:text-slate-400">
                       {format(new Date(transaction.date), "PP")}
                     </p>
                   </div>
@@ -106,8 +106,8 @@ const currentDate = new Date();
                       className={cn(
                         "flex items-center",
                         transaction.type === "EXPENSE"
-                          ? "text-red-500"
-                          : "text-green-500"
+                          ? "text-red-500 dark:text-red-400"
+                          : "text-green-500 dark:text-green-400"
                       )}
                     >
                       {transaction.type === "EXPENSE" ? (
@@ -126,15 +126,15 @@ const currentDate = new Date();
       </Card>
 
       {/* Expense Breakdown Card */}
-      <Card>
+      <Card className="dark:bg-slate-800 dark:border-slate-700">
         <CardHeader>
-          <CardTitle className="text-base font-normal">
+          <CardTitle className="text-base font-normal text-foreground dark:text-white">
             Monthly Expense Breakdown
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 pb-5">
           {pieChartData.length === 0 ? (
-            <p className="text-center text-muted-foreground py-4">
+            <p className="text-center text-muted-foreground dark:text-slate-400 py-4">
               No expenses this month
             </p>
           ) : (
@@ -149,6 +149,7 @@ const currentDate = new Date();
                     fill="#8884d8"
                     dataKey="value"
                     label={({ name, value }) => `${name}: $${value.toFixed(2)}`}
+                    labelStyle={{ fontSize: "12px", fill: "hsl(var(--foreground))" }}
                   >
                     {pieChartData.map((entry, index) => (
                       <Cell
@@ -165,7 +166,7 @@ const currentDate = new Date();
                       borderRadius: "var(--radius)",
                     }}
                   />
-                  <Legend />
+                  <Legend wrapperStyle={{ color: "hsl(var(--foreground))" }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
