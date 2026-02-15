@@ -60,15 +60,14 @@ export async function createAccount(data) {
       throw new Error("Invalid balance amount");
     }
 
-    // Check if this is the user's first account
-    const existingAccounts = await db.account.findMany({
+    // Check if this is the user's first account (count is faster than findMany)
+    const accountCount = await db.account.count({
       where: { userId: user.id },
     });
 
     // If it's the first account, make it default regardless of user input
     // If not, use the user's preference
-    const shouldBeDefault =
-      existingAccounts.length === 0 ? true : data.isDefault;
+    const shouldBeDefault = accountCount === 0 ? true : data.isDefault;
 
     // If this account should be default, unset other default accounts
     if (shouldBeDefault) {
@@ -118,16 +117,18 @@ export async function getUserAccounts() {
   return accounts.map(serializeTransaction);
 }
 
-export async function getDashboardData() {
+export async function getDashboardData(limit = 10) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
   const user = await db.user.findUnique({ where: { clerkUserId: userId } });
   if (!user) throw new Error("User not found");
 
+  // Get recent transactions with pagination
   const transactions = await db.transaction.findMany({
     where: { userId: user.id },
     orderBy: { date: "desc" },
+    take: limit, // Limit to last N transactions instead of all
   });
 
   return transactions.map(serializeTransaction);

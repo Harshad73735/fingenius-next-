@@ -78,7 +78,7 @@ model Transaction {
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
-  @@index([userId])
+  @@index([userId, date])
   @@index([accountId])
   @@map("transactions")
 }

@@ -14,15 +14,15 @@ const DashboardPage = async() => {
   const user = await checkUser(); // Ensure user exists in DB
   const [accounts, transactions] = await Promise.all([
     getUserAccounts(),
-    getDashboardData(),
+    getDashboardData(15), // Limit to 15 transactions
   ]);
 
   const defaultAccount = accounts?.find((account) => account.isDefault);
 
-  // Get budget for default account
+  // Get budget for default account in parallel
   let budgetData = null;
   if (defaultAccount) {
-    budgetData = await getCurrentBudget(defaultAccount.id);
+    budgetData = await Promise.resolve(getCurrentBudget(defaultAccount.id));
   }
 
   return (
