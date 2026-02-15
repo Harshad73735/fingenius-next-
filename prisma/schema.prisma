@@ -17,10 +17,24 @@ model User {
   transactions  Transaction[]
   accounts      Account[]
   budgets       Budget[]
+  emails        UserEmail[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
   @@map("users")
+}
+
+model UserEmail {
+  id        String    @id @default(uuid())
+  email     String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([userId, email])
+  @@index([userId])
+  @@map("user_emails")
 }
 
 model Account {

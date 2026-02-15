@@ -76,18 +76,29 @@ export async function getCurrentBudget(accountId) {
       // Send alert only if last alert was more than 24 hours ago
       if (!lastAlert || hoursSinceLastAlert > 24) {
         try {
-          // Validate email before sending
-          if (!user.email || user.email.trim() === "") {
-            console.warn("[Budget Alert] User email not set. Skipping email alert.");
+          // Get all emails for the user (primary + additional emails)
+          const userEmails = await db.userEmail.findMany({
+            where: { userId: user.id },
+            select: { email: true },
+          });
+
+          // Combine primary email with additional emails
+          const emailsList = [
+            user.email,
+            ...userEmails.map((ue) => ue.email),
+          ].filter((email) => email && email.trim() !== "");
+
+          if (emailsList.length === 0) {
+            console.warn("[Budget Alert] No emails found for user. Skipping email alert.");
             return {
               budget: budget ? { ...budget, amount: budget.amount.toNumber() } : null,
               currentExpenses,
             };
           }
 
-          console.log("[Budget Alert] Sending email to:", user.email);
+          console.log("[Budget Alert] Sending email to:", emailsList);
           const emailResponse = await sendEmail({
-            to: user.email,
+            to: emailsList,
             subject: "Budget Alert: You've exceeded your budget!",
             react: BudgetAlertEmail({
               userName: user.name,
