@@ -7,6 +7,8 @@ export default function BudgetAlertEmail({
   currentExpenses = 0,
   percentageExceeded = 0,
 }) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
   return (
     <Html>
       <Body style={{ fontFamily: "Arial, sans-serif", backgroundColor: "#f5f5f5", padding: "20px" }}>
@@ -48,7 +50,7 @@ export default function BudgetAlertEmail({
           </Text>
 
           <Link
-            href="http://localhost:3000/dashboard"
+            href={`${appUrl}/dashboard`}
             style={{
               display: "inline-block",
               backgroundColor: "#3b82f6",
