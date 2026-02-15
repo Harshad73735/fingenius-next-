@@ -1,31 +1,92 @@
 "use server";
 
 import { Resend } from "resend";
+import nodemailer from "nodemailer";
+import { render } from "@react-email/render";
 
 export async function sendEmail({ to, subject, react }) {
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
+  const smtpPort = Number(process.env.SMTP_PORT || 465);
+  const smtpFrom = process.env.SMTP_FROM || smtpUser;
   const apiKey = process.env.RESEND_API_KEY;
-  const verifiedEmail = "harshadhadule0@gmail.com"; // Your verified Resend email
-  
+
   console.log("[sendEmail] Attempting to send email:", {
     to,
     subject,
-    apiKeyExists: !!apiKey,
-    apiKeyPreview: apiKey ? apiKey.substring(0, 10) + "..." : "MISSING"
+    smtpConfigured: !!(smtpUser && smtpPass),
+    smtpHost,
+    smtpPort,
+    resendApiKeyExists: !!apiKey,
   });
 
-  if (!apiKey) {
-    console.error("[sendEmail] ERROR: RESEND_API_KEY is not set in .env");
-    return { success: false, error: "RESEND_API_KEY not configured" };
+  if (smtpUser && smtpPass) {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+      });
+
+      const html = react ? await render(react) : undefined;
+      const data = await transporter.sendMail({
+        from: smtpFrom,
+        to,
+        subject,
+        html,
+      });
+
+      console.log("[sendEmail] Email sent successfully via SMTP:", {
+        messageId: data.messageId,
+        response: data.response,
+      });
+      return { success: true, data };
+    } catch (error) {
+      const errorDetails = {
+        message: error?.message,
+        code: error?.code,
+        name: error?.name,
+        stack: error?.stack,
+        to,
+        subject,
+      };
+      console.error("[sendEmail] SMTP send failed:", errorDetails);
+
+      if (apiKey) {
+        console.warn("[sendEmail] Falling back to Resend after SMTP failure");
+        try {
+          const resend = new Resend(apiKey);
+          const data = await resend.emails.send({
+            from: "Finance App <onboarding@resend.dev>",
+            to,
+            subject,
+            react,
+          });
+
+          console.log("[sendEmail] Email sent successfully via Resend:", data);
+          return { success: true, data };
+        } catch (resendError) {
+          console.error("[sendEmail] Resend send failed after SMTP error:", {
+            message: resendError?.message,
+            code: resendError?.code,
+            name: resendError?.name,
+            status: resendError?.statusCode,
+          });
+        }
+      }
+
+      return { success: false, error: error?.message || "SMTP send failed" };
+    }
   }
 
-  // Check if recipient email is verified in Resend
-  if (to !== verifiedEmail) {
-    console.warn("[sendEmail] WARNING: Email recipient is not verified in Resend.", {
-      to,
-      verifiedEmail,
-      instruction: "In development, only verified emails can receive. To send to other emails, verify a domain at resend.com/domains"
-    });
-    // Still attempt to send - Resend will handle the validation
+  if (!apiKey) {
+    console.error("[sendEmail] ERROR: No SMTP credentials or RESEND_API_KEY configured");
+    return { success: false, error: "Email provider not configured" };
   }
 
   const resend = new Resend(apiKey);
@@ -38,16 +99,15 @@ export async function sendEmail({ to, subject, react }) {
       react,
     });
 
-    console.log("[sendEmail] Email sent successfully:", data);
+    console.log("[sendEmail] Email sent successfully via Resend:", data);
     return { success: true, data };
   } catch (error) {
-    console.error("[sendEmail] FAILED TO SEND:", {
+    console.error("[sendEmail] Resend send failed:", {
       error: error.message,
       status: error.statusCode,
       details: error,
       to,
       subject,
-      instruction: to !== verifiedEmail ? `Only ${verifiedEmail} can receive emails in test mode. Verify your domain at https://resend.com/domains to send to other emails.` : null
     });
     return { success: false, error: error.message };
   }
