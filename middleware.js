@@ -1,4 +1,3 @@
-import arcjet from '@arcjet/next';
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 const isProtectedRoute = createRouteMatcher([
@@ -6,26 +5,6 @@ const isProtectedRoute = createRouteMatcher([
   "/account(.*)",
   "/transaction(.*)",
 ]);
-
-// const aj = arcjet({
-//   key: process.env.ARCJET_KEY,
-//   rules: [
-//     shield({
-//       mode: "LIVE",
-//     }),
-//     detectBot({
-//       mode: "LIVE", 
-//       allow: [
-//         "CATEGORY:SEARCH_ENGINE",
-//         "GO_HTTP", 
-//       ],
-//     }),
-//   ],
-// });
-
-// docker build -t fingenius-next .
-
-// docker run -p 3000:3000 fingenius-next
 
 
 export default clerkMiddleware(async(auth, req)=>{
