@@ -2,7 +2,6 @@
 
 import { scanReceipt } from '@/actions/transaction';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import useFetch from '@/hooks/use-fetch';
 import { Camera, CheckCircle2, Crop, ImageIcon, Loader2, ScanLine, Sparkles, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -17,11 +16,16 @@ const SCAN_STEPS = [
   "Finalizing results...",
 ];
 
+// Unique IDs for the two file inputs so <label htmlFor> works
+const CAMERA_INPUT_ID = "fg-camera-input";
+const GALLERY_INPUT_ID = "fg-gallery-input";
+
 const ReceiptScanner = ({ onScanComplete }) => {
   // Two separate inputs: camera (capture) and gallery (no capture)
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
   const lastProcessedRef = useRef(null);
+  const [showMenu, setShowMenu] = useState(false);  // custom popover state
 
   const [preview, setPreview] = useState(null);
   const [rawFile, setRawFile] = useState(null);
@@ -116,57 +120,94 @@ const ReceiptScanner = ({ onScanComplete }) => {
         />
       )}
 
-      {/* Single button with dropdown menu — like WhatsApp/Instagram */}
+      {/*
+        WHY <label htmlFor> instead of onClick + inputRef.click():
+        On mobile, calling inputRef.click() programmatically after a
+        dropdown closes is NOT a direct user gesture — the browser blocks it.
+        A <label htmlFor="input-id"> click is ALWAYS a direct gesture.
+      */}
+
+      {/* Camera input  (capture=environment opens back camera on mobile) */}
+      <input
+        id={CAMERA_INPUT_ID}
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) { handleFileSelected(f); setShowMenu(false); } }}
+      />
+      {/* Gallery input (no capture — opens photo library on mobile) */}
+      <input
+        id={GALLERY_INPUT_ID}
+        ref={galleryInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) { handleFileSelected(f); setShowMenu(false); } }}
+      />
+
+      {/* ── Trigger button + custom label-based popover ── */}
       {!preview && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              className="w-full h-12 relative overflow-hidden bg-gradient-to-r from-violet-600 via-purple-500 to-pink-500 animate-gradient border-0 text-white font-semibold shadow-lg hover:shadow-purple-500/40 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 touch-manipulation"
-            >
-              <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity rounded-[inherit]" />
-              <Sparkles className="mr-2 h-4 w-4 animate-pulse" />
-              <Camera className="mr-2 h-4 w-4" />
-              <span>Scan Receipt with AI</span>
-            </Button>
-          </DropdownMenuTrigger>
-
-          {/* Popup menu — appears above the button, like app attachment pickers */}
-          <DropdownMenuContent
-            align="end"
-            side="top"
-            sideOffset={8}
-            className="w-52 p-1.5 rounded-xl shadow-xl shadow-black/20 dark:shadow-black/50 border border-border/60 dark:border-slate-700/60 backdrop-blur-xl bg-white/95 dark:bg-slate-900/95"
+        <div className="relative">
+          {/* Main gradient button */}
+          <Button
+            type="button"
+            className="w-full h-12 relative overflow-hidden bg-gradient-to-r from-violet-600 via-purple-500 to-pink-500 border-0 text-white font-semibold shadow-lg hover:opacity-90 active:scale-[0.98] transition-all duration-200 touch-manipulation"
+            onClick={() => setShowMenu((s) => !s)}
           >
-            {/* Take Photo option */}
-            <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/30 focus:bg-purple-50 dark:focus:bg-purple-900/30 group"
-              onClick={() => cameraInputRef.current?.click()}
-            >
-              <div className="flex items-center justify-center h-9 w-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 shadow-sm">
-                <Camera className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-foreground dark:text-white">Take Photo</p>
-                <p className="text-[11px] text-muted-foreground">Use your camera</p>
-              </div>
-            </DropdownMenuItem>
+            <Sparkles className="mr-2 h-4 w-4 animate-pulse" />
+            <Camera className="mr-2 h-4 w-4" />
+            <span>Scan Receipt with AI</span>
+          </Button>
 
-            {/* Choose from Gallery option */}
-            <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/30 focus:bg-pink-50 dark:focus:bg-pink-900/30 group"
-              onClick={() => galleryInputRef.current?.click()}
-            >
-              <div className="flex items-center justify-center h-9 w-9 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 shadow-sm">
-                <ImageIcon className="h-4 w-4 text-white" />
+          {/* Menu: shown above the button */}
+          {showMenu && (
+            <>
+              {/* Invisible backdrop: tap anywhere outside to close */}
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowMenu(false)}
+              />
+
+              {/* Action sheet anchored above-right of the button */}
+              <div className="absolute bottom-[calc(100%+10px)] right-0 z-50 w-56 rounded-2xl overflow-hidden shadow-2xl shadow-black/30 dark:shadow-black/60 border border-white/20 dark:border-slate-700/60 bg-white/[0.97] dark:bg-slate-900/97 backdrop-blur-xl">
+                {/* Take Photo */}
+                <label
+                  htmlFor={CAMERA_INPUT_ID}
+                  className="flex items-center gap-3.5 px-4 py-4 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/30 active:bg-purple-100 dark:active:bg-purple-900/40 transition-colors touch-manipulation select-none"
+                  onClick={() => setShowMenu(false)}
+                >
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 shadow-md shrink-0">
+                    <Camera className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground dark:text-white leading-tight">Take Photo</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Open camera</p>
+                  </div>
+                </label>
+
+                {/* Divider */}
+                <div className="h-px bg-border/50 dark:bg-slate-700/60 mx-4" />
+
+                {/* Choose from Gallery */}
+                <label
+                  htmlFor={GALLERY_INPUT_ID}
+                  className="flex items-center gap-3.5 px-4 py-4 cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/30 active:bg-pink-100 dark:active:bg-pink-900/40 transition-colors touch-manipulation select-none"
+                  onClick={() => setShowMenu(false)}
+                >
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 shadow-md shrink-0">
+                    <ImageIcon className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground dark:text-white leading-tight">Choose from Gallery</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Pick from your photos</p>
+                  </div>
+                </label>
               </div>
-              <div>
-                <p className="text-sm font-medium text-foreground dark:text-white">Choose from Gallery</p>
-                <p className="text-[11px] text-muted-foreground">Pick from your photos</p>
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </>
+          )}
+        </div>
       )}
 
       {/* Preview card with laser scan overlay */}

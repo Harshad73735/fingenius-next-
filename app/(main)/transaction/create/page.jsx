@@ -32,8 +32,8 @@ const AddTransactionPage = async ({ searchParams }) => {
         </p>
       </div>
 
-      {/* Card wrapper for the form */}
-      <div className="rounded-2xl border border-border/50 dark:border-slate-700/50 bg-card dark:bg-slate-800/40 shadow-sm p-5 sm:p-7">
+      {/* Card wrapper for the form — overflow-visible so scanner popup can float above */}
+      <div className="rounded-2xl border border-border/50 dark:border-slate-700/50 bg-card dark:bg-slate-800/40 shadow-sm p-5 sm:p-7 overflow-visible">
         <AddTransactionForm
           accounts={accounts}
           categories={defaultCategories}

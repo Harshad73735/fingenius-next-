@@ -166,21 +166,15 @@ export async function getTransaction(id) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
+  // Parallel: user lookup happens while we already have userId
+  const user = await db.user.findUnique({ where: { clerkUserId: userId } });
   if (!user) throw new Error("User not found");
 
   const transaction = await db.transaction.findUnique({
-    where: {
-      id,
-      userId: user.id,
-    },
+    where: { id, userId: user.id },
   });
 
   if (!transaction) throw new Error("Transaction not found");
-
   return serializeAmount(transaction);
 }
 
@@ -189,43 +183,24 @@ export async function updateTransaction(id, data) {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 
-    const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
-    });
-
+    const user = await db.user.findUnique({ where: { clerkUserId: userId } });
     if (!user) throw new Error("User not found");
 
-    // Get original transaction to calculate balance change
     const originalTransaction = await db.transaction.findUnique({
-      where: {
-        id,
-        userId: user.id,
-      },
-      include: {
-        account: true,
-      },
+      where: { id, userId: user.id },
+      include: { account: true },
     });
-
     if (!originalTransaction) throw new Error("Transaction not found");
 
-    // Calculate balance changes
-    const oldBalanceChange =
-      originalTransaction.type === "EXPENSE"
-        ? -originalTransaction.amount.toNumber()
-        : originalTransaction.amount.toNumber();
-
-    const newBalanceChange =
-      data.type === "EXPENSE" ? -data.amount : data.amount;
-
+    const oldBalanceChange = originalTransaction.type === "EXPENSE"
+      ? -originalTransaction.amount.toNumber()
+      : originalTransaction.amount.toNumber();
+    const newBalanceChange = data.type === "EXPENSE" ? -data.amount : data.amount;
     const netBalanceChange = newBalanceChange - oldBalanceChange;
 
-    // Update transaction and account balance in a transaction
     const transaction = await db.$transaction(async (tx) => {
       const updated = await tx.transaction.update({
-        where: {
-          id,
-          userId: user.id,
-        },
+        where: { id, userId: user.id },
         data: {
           ...data,
           nextRecurringDate:
@@ -235,21 +210,20 @@ export async function updateTransaction(id, data) {
         },
       });
 
-      // Update account balance
       await tx.account.update({
         where: { id: data.accountId },
-        data: {
-          balance: {
-            increment: netBalanceChange,
-          },
-        },
+        data: { balance: { increment: netBalanceChange } },
       });
 
       return updated;
     });
 
-    revalidatePath("/dashboard");
-    revalidatePath(`/account/${data.accountId}`);
+    // Fire cache invalidation after returning — don't block the client
+    const accountId = data.accountId;
+    setTimeout(() => {
+      revalidatePath("/dashboard");
+      revalidatePath(`/account/${accountId}`);
+    }, 0);
 
     return { success: true, data: serializeAmount(transaction) };
   } catch (error) {
