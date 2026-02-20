@@ -9,6 +9,7 @@ import BudgetProgress from './_components/budget-progress';
 import DashboardOverview from './_components/transactions-overview';
 import { checkUser } from '@/lib/checkUser';
 import { ProfileUpdateForm } from '@/components/profile-update-form';
+import Greeting from './_components/greeting';
 
 // ──────────────────────────────────────────────
 // Shimmer helper (inline so no import needed)
@@ -88,10 +89,10 @@ const DashboardPage = async () => {
   const defaultAccount = accounts?.find((a) => a.isDefault);
 
   return (
-    <div className="px-4 sm:px-6 pt-4 pb-16 max-w-7xl mx-auto">
+    <div className="px-4 sm:px-6 pb-16 max-w-7xl mx-auto">
 
       {/* ═══════════════ HERO SECTION ═══════════════ */}
-      <section className="relative rounded-3xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/30 dark:border-slate-700/50 shadow-xl shadow-purple-500/5 p-6 sm:p-10 mt-2 overflow-hidden">
+      <section className="relative rounded-3xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/30 dark:border-slate-700/50 shadow-xl shadow-purple-500/5 p-6 sm:p-10 overflow-hidden">
         {/* Decorative gradients */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/60 via-purple-50/40 to-pink-50/60 dark:from-indigo-950/30 dark:via-purple-950/20 dark:to-pink-950/30 rounded-3xl" />
         <div className="absolute -top-20 -right-20 w-56 h-56 bg-purple-400/15 dark:bg-purple-500/10 blur-[80px] rounded-full pointer-events-none" />
@@ -103,12 +104,7 @@ const DashboardPage = async () => {
             <p className="text-xs font-bold text-purple-600 dark:text-purple-400 tracking-widest uppercase">
               Dashboard Overview
             </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground dark:text-white leading-tight">
-              Good {
-                new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'
-              }, {user?.name?.split(' ')[0] || 'there'}
-              <span className="inline-block ml-2 text-3xl sm:text-4xl animate-bounce origin-bottom">👋</span>
-            </h1>
+            <Greeting name={user?.name?.split(' ')[0]} />
             <p className="text-muted-foreground text-sm sm:text-base max-w-lg leading-relaxed mt-1">
               Here's what is happening with your finances today.
             </p>

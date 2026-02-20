@@ -20,7 +20,7 @@ const AddTransactionPage = async ({ searchParams }) => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 pb-16 relative">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 pb-16 relative">
       {/* Ambient premium background glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-xl h-64 bg-purple-500/10 dark:bg-purple-600/10 blur-[100px] rounded-full pointer-events-none -z-10" />
 
