@@ -98,23 +98,23 @@ const TransactionTable = ({ transactions }) => {
       )}
 
       {/* Filters row */}
-      <div className="flex flex-col sm:flex-row gap-2">
+      <div className="flex flex-col sm:flex-row gap-3 mb-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search by description or category..."
             value={searchTerm}
             onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-            className="pl-9 h-9 text-sm rounded-lg border-border/60 dark:border-slate-700 focus-visible:ring-purple-500/30"
+            className="pl-10 h-11 text-sm rounded-xl border-border/60 bg-white/50 dark:bg-slate-900/50 focus-visible:ring-purple-500/30"
           />
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
           <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v === "ALL" ? "" : v); setCurrentPage(1); }}>
-            <SelectTrigger className="h-9 w-[120px] text-xs rounded-lg border-border/60 dark:border-slate-700">
+            <SelectTrigger className="h-11 w-[130px] text-sm rounded-xl border-border/60 bg-white/50 dark:bg-slate-900/50 font-medium">
               <SelectValue placeholder="All Types" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl border-border/60">
               <SelectItem value="ALL">All Types</SelectItem>
               <SelectItem value="INCOME">Income</SelectItem>
               <SelectItem value="EXPENSE">Expense</SelectItem>
@@ -122,7 +122,7 @@ const TransactionTable = ({ transactions }) => {
           </Select>
 
           {(searchTerm || typeFilter) && (
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground" onClick={handleClearFilters}>
+            <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl text-muted-foreground hover:bg-slate-100 hover:text-foreground dark:hover:bg-slate-800" onClick={handleClearFilters}>
               <X className="h-4 w-4" />
             </Button>
           )}
@@ -130,12 +130,11 @@ const TransactionTable = ({ transactions }) => {
           {selectedIds.length > 0 && (
             <Button
               variant="destructive"
-              size="sm"
-              className="h-9 px-3 rounded-lg flex items-center gap-1.5 text-xs font-medium"
+              className="h-11 px-4 rounded-xl flex items-center gap-2 font-semibold shadow-sm"
               onClick={handleBulkDelete}
               disabled={deleteLoading}
             >
-              <Trash className="h-3.5 w-3.5" />
+              <Trash className="h-4 w-4" />
               Delete ({selectedIds.length})
             </Button>
           )}
@@ -143,7 +142,7 @@ const TransactionTable = ({ transactions }) => {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-border/50 dark:border-slate-700/50 overflow-hidden shadow-sm">
+      <div className="rounded-2xl border border-border/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40 dark:bg-slate-800/60 hover:bg-muted/40 dark:hover:bg-slate-800/60 border-b border-border/50 dark:border-slate-700/50">
@@ -170,12 +169,12 @@ const TransactionTable = ({ transactions }) => {
           <TableBody>
             {paginatedTransactions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="py-16 text-center">
-                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                    <Search className="h-8 w-8 opacity-20" />
-                    <p className="text-sm font-medium">No transactions found</p>
+                <TableCell colSpan={6} className="py-20 text-center">
+                  <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                    <Search className="h-10 w-10 opacity-20 text-purple-500" />
+                    <p className="text-base font-medium">No transactions found</p>
                     {(searchTerm || typeFilter) && (
-                      <button onClick={handleClearFilters} className="text-xs text-purple-500 hover:underline mt-1">Clear filters</button>
+                      <button onClick={handleClearFilters} className="text-sm text-purple-500 hover:text-purple-600 font-semibold hover:underline transition-all">Clear active filters</button>
                     )}
                   </div>
                 </TableCell>
@@ -185,32 +184,32 @@ const TransactionTable = ({ transactions }) => {
                 <TableRow
                   key={t.id}
                   className={cn(
-                    "border-b border-border/30 dark:border-slate-700/40 transition-colors duration-150",
-                    "hover:bg-muted/30 dark:hover:bg-slate-800/40",
+                    "border-b border-border/30 dark:border-slate-700/40 transition-colors duration-200",
+                    "hover:bg-slate-50/80 dark:hover:bg-slate-800/60 cursor-default",
                     selectedIds.includes(t.id) && "bg-purple-50/60 dark:bg-purple-900/10"
                   )}
                 >
                   <TableCell className="pl-4">
                     <Checkbox checked={selectedIds.includes(t.id)} onCheckedChange={() => handleSelect(t.id)} />
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                  <TableCell className="text-sm font-medium text-muted-foreground whitespace-nowrap">
                     {format(new Date(t.date), "MMM d, yyyy")}
                     {t.isRecurring && (
-                      <div className="flex items-center gap-1 mt-0.5">
-                        <RefreshCw className="h-3 w-3 text-blue-400" />
-                        <span className="text-[10px] text-blue-500 capitalize">{t.recurringInterval?.toLowerCase()}</span>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <RefreshCw className="h-3 w-3 text-indigo-400" />
+                        <span className="text-[10px] font-bold tracking-wider text-indigo-500 uppercase">{t.recurringInterval}</span>
                       </div>
                     )}
                   </TableCell>
                   <TableCell>
-                    <p className="text-sm font-medium text-foreground dark:text-white truncate max-w-[160px] sm:max-w-[240px]">
-                      {t.description || <span className="text-muted-foreground italic text-xs">No description</span>}
+                    <p className="text-sm font-semibold text-foreground dark:text-white truncate max-w-[160px] sm:max-w-[280px]">
+                      {t.description || <span className="text-muted-foreground italic font-normal text-xs">No description</span>}
                     </p>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
                     {t.category && (
                       <span
-                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white"
+                        className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold text-white shadow-sm tracking-wide lowercase"
                         style={{ backgroundColor: categoryColors[t.category] || "#6366f1" }}
                       >
                         {t.category}
@@ -219,28 +218,35 @@ const TransactionTable = ({ transactions }) => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className={cn(
-                      "inline-flex items-center gap-0.5 font-semibold text-sm tabular-nums",
-                      t.type === "EXPENSE" ? "text-rose-500 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"
+                      "inline-flex flex-col items-end gap-0.5",
+                      t.type === "EXPENSE" ? "text-foreground dark:text-white" : "text-emerald-600 dark:text-emerald-400"
                     )}>
-                      {t.type === "EXPENSE"
-                        ? <ArrowDownRight className="h-3.5 w-3.5" />
-                        : <ArrowUpRight className="h-3.5 w-3.5" />}
-                      ${t.amount.toFixed(2)}
+                      <span className="font-bold tabular-nums text-sm">
+                        {t.type === "EXPENSE" ? "-" : "+"}
+                        ${t.amount.toFixed(2)}
+                      </span>
+                      {/* Indicator pill */}
+                      <span className={cn(
+                        "text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-widest",
+                        t.type === "EXPENSE" ? "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400" : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                      )}>
+                        {t.type}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-muted">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-36 rounded-xl">
-                        <DropdownMenuItem className="rounded-lg text-sm cursor-pointer" onClick={() => router.push(`/transaction/create?edit=${t.id}`)}>
-                          Edit
+                      <DropdownMenuContent align="end" className="w-36 rounded-xl border-border/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
+                        <DropdownMenuItem className="rounded-lg text-sm cursor-pointer font-medium" onClick={() => router.push(`/transaction/create?edit=${t.id}`)}>
+                          Edit Transaction
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="rounded-lg text-sm text-destructive focus:text-destructive cursor-pointer" onClick={() => deleteFn([t.id])}>
+                        <DropdownMenuSeparator className="bg-border/50" />
+                        <DropdownMenuItem className="rounded-lg text-sm font-semibold text-rose-600 focus:text-rose-700 focus:bg-rose-50 dark:focus:bg-rose-900/20 cursor-pointer" onClick={() => deleteFn([t.id])}>
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>

@@ -69,9 +69,9 @@ const ReceiptScanner = ({ onScanComplete }) => {
     await scanReceiptFn(croppedFile);
   };
 
-  const handleCropCancel = async () => {
+  const handleCropCancel = () => {
     setShowCrop(false);
-    if (rawFile) await scanReceiptFn(rawFile);
+    handleClearPreview();
   };
 
   const handleClearPreview = () => {
@@ -150,16 +150,23 @@ const ReceiptScanner = ({ onScanComplete }) => {
       {/* ── Trigger button + custom label-based popover ── */}
       {!preview && (
         <div className="relative">
-          {/* Main gradient button */}
-          <Button
-            type="button"
-            className="w-full h-12 relative overflow-hidden bg-gradient-to-r from-violet-600 via-purple-500 to-pink-500 border-0 text-white font-semibold shadow-lg hover:opacity-90 active:scale-[0.98] transition-all duration-200 touch-manipulation"
-            onClick={() => setShowMenu((s) => !s)}
-          >
-            <Sparkles className="mr-2 h-4 w-4 animate-pulse" />
-            <Camera className="mr-2 h-4 w-4" />
-            <span>Scan Receipt with AI</span>
-          </Button>
+          {/* Main gradient button with animated glowing backdrop */}
+          <div className="relative group">
+            {/* Glowing orb behind button */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-500 animate-pulse" />
+            
+            <Button
+              type="button"
+              className="w-full h-14 relative overflow-hidden bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 border-0 text-white font-bold shadow-xl shadow-purple-900/20 hover:shadow-purple-900/40 active:scale-[0.98] transition-all duration-300 touch-manipulation rounded-xl"
+              onClick={() => setShowMenu((s) => !s)}
+            >
+              {/* Subtle glass inner ring */}
+              <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-white/20 pointer-events-none" />
+              <Sparkles className="mr-2.5 h-5 w-5 animate-pulse text-pink-300" />
+              <Camera className="mr-2 h-5 w-5" />
+              <span className="text-base tracking-wide">Scan Receipt with AI</span>
+            </Button>
+          </div>
 
           {/* Menu: shown above the button */}
           {showMenu && (

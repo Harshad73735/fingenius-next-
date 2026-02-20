@@ -65,16 +65,16 @@ const AccountChart = ({ transactions }) => {
   const net = totals.income - totals.expense;
 
   return (
-    <Card className="border border-border/50 dark:border-slate-700/50 shadow-sm dark:bg-slate-800/40">
+    <Card className="rounded-2xl border border-border/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle className="text-base font-semibold text-foreground dark:text-white">
           Transaction Overview
         </CardTitle>
         <Select defaultValue={dateRange} onValueChange={setDateRange}>
-          <SelectTrigger className="w-[130px] h-8 text-xs rounded-lg border-border/60 dark:border-slate-700">
+          <SelectTrigger className="w-[130px] h-9 text-xs font-medium rounded-xl border-border/60 bg-white/50 dark:bg-slate-900/50">
             <SelectValue placeholder="Select range" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="rounded-xl border-border/60">
             {Object.entries(DATE_RANGES).map(([key, { label }]) => (
               <SelectItem key={key} value={key} className="text-xs">{label}</SelectItem>
             ))}
@@ -85,34 +85,34 @@ const AccountChart = ({ transactions }) => {
       <CardContent className="space-y-5">
         {/* Stat pills */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="flex flex-col items-center gap-1 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200/60 dark:border-emerald-800/40 p-3">
-            <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-medium uppercase tracking-wider">Income</span>
+          <div className="flex flex-col items-center gap-1 rounded-2xl bg-emerald-50/80 dark:bg-emerald-900/20 border border-emerald-200/60 dark:border-emerald-800/40 p-4 shadow-sm">
+            <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+              <TrendingUp className="h-4 w-4" />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Income</span>
             </div>
-            <p className="text-base sm:text-lg font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
+            <p className="text-base sm:text-xl font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums tracking-tight">
               ${totals.income.toFixed(2)}
             </p>
           </div>
-          <div className="flex flex-col items-center gap-1 rounded-xl bg-rose-50 dark:bg-rose-900/20 border border-rose-200/60 dark:border-rose-800/40 p-3">
-            <div className="flex items-center gap-1 text-rose-500 dark:text-rose-400">
-              <TrendingDown className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-medium uppercase tracking-wider">Expense</span>
+          <div className="flex flex-col items-center gap-1 rounded-2xl bg-rose-50/80 dark:bg-rose-900/20 border border-rose-200/60 dark:border-rose-800/40 p-4 shadow-sm">
+            <div className="flex items-center gap-1.5 text-rose-500 dark:text-rose-400">
+              <TrendingDown className="h-4 w-4" />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Expense</span>
             </div>
-            <p className="text-base sm:text-lg font-bold text-rose-500 dark:text-rose-400 tabular-nums">
+            <p className="text-base sm:text-xl font-extrabold text-rose-500 dark:text-rose-400 tabular-nums tracking-tight">
               ${totals.expense.toFixed(2)}
             </p>
           </div>
-          <div className={`flex flex-col items-center gap-1 rounded-xl p-3 border ${
+          <div className={`flex flex-col items-center gap-1 rounded-2xl p-4 border shadow-sm ${
             net >= 0
-              ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200/60 dark:border-blue-800/40"
-              : "bg-orange-50 dark:bg-orange-900/20 border-orange-200/60 dark:border-orange-800/40"
+              ? "bg-blue-50/80 dark:bg-blue-900/20 border-blue-200/60 dark:border-blue-800/40"
+              : "bg-orange-50/80 dark:bg-orange-900/20 border-orange-200/60 dark:border-orange-800/40"
           }`}>
-            <div className={`flex items-center gap-1 ${net >= 0 ? "text-blue-600 dark:text-blue-400" : "text-orange-500 dark:text-orange-400"}`}>
-              <Wallet className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-medium uppercase tracking-wider">Net</span>
+            <div className={`flex items-center gap-1.5 ${net >= 0 ? "text-blue-600 dark:text-blue-400" : "text-orange-500 dark:text-orange-400"}`}>
+              <Wallet className="h-4 w-4" />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Net</span>
             </div>
-            <p className={`text-base sm:text-lg font-bold tabular-nums ${net >= 0 ? "text-blue-600 dark:text-blue-400" : "text-orange-500 dark:text-orange-400"}`}>
+            <p className={`text-base sm:text-xl font-extrabold tabular-nums tracking-tight ${net >= 0 ? "text-blue-600 dark:text-blue-400" : "text-orange-500 dark:text-orange-400"}`}>
               {net >= 0 ? "+" : ""}${net.toFixed(2)}
             </p>
           </div>

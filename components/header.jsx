@@ -11,7 +11,7 @@ import { ThemeToggleWrapper } from "./theme-toggle-wrapper";
 const Header = async () => {
   await checkUser
   return (
-    <div className="fixed top-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-50 border-b dark:border-slate-700 overflow-x-hidden">
+    <div className="fixed top-0 w-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl z-50 border-b border-border/50 dark:border-slate-800/50 shadow-sm overflow-x-hidden transition-all duration-300">
         <nav className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between w-full max-w-full">
           <Link href="/" className="shrink-0 mr-1 sm:mr-4">
             <Image 
@@ -26,16 +26,16 @@ const Header = async () => {
        
           <div className="flex items-center gap-1 sm:gap-4 shrink-0">
             <SignedIn>
-              <Link href={"/dashboard"} className="text-gray-600 hover:text-purple-600 flex items-center">
-                <Button variant="outline" className="px-2 sm:px-4">
+              <Link href={"/dashboard"} className="flex flex-col sm:flex-row items-center justify-center">
+                <Button variant="ghost" className="px-3 sm:px-4 h-9 sm:h-10 rounded-xl font-semibold text-muted-foreground hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200">
                   <LayoutDashboard size={18} className="sm:mr-2" />
                   <span className="hidden sm:inline">Dashboard</span>
                 </Button>
               </Link>
 
-              <Link href={"/transaction/create"} className="text-gray-600 hover:text-purple-600 flex items-center">
-                <Button className="px-2 sm:px-4 flex items-center">
-                  <PenBox size={18} className="sm:mr-2" />
+              <Link href={"/transaction/create"} className="flex items-center">
+                <Button className="px-3 sm:px-4 h-9 sm:h-10 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-md shadow-purple-500/20 transition-all duration-200 flex items-center gap-2">
+                  <PenBox size={18} />
                   <span className="hidden sm:inline">Add Transaction</span>
                 </Button>
               </Link>
@@ -43,7 +43,9 @@ const Header = async () => {
 
             <SignedOut>
               <SignInButton forceRedirectUrl="/dashboard">
-                <Button variant="outline">Login</Button>
+                <Button variant="outline" className="rounded-xl font-semibold h-10 px-6 border-border/60 hover:bg-accent hover:text-accent-foreground transition-all duration-200">
+                  Login
+                </Button>
               </SignInButton>
             </SignedOut>
 

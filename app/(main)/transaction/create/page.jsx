@@ -19,27 +19,35 @@ const AddTransactionPage = async ({ searchParams }) => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 pb-12">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 pb-16 relative">
+      {/* Ambient premium background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-xl h-64 bg-purple-500/10 dark:bg-purple-600/10 blur-[100px] rounded-full pointer-events-none -z-10" />
+
       {/* Premium page header */}
-      <div className="mb-8">
-        <h1 className="text-4xl sm:text-5xl font-bold gradient-title">
+      <div className="mb-10 text-center sm:text-left">
+        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight gradient-title mb-3">
           {editId ? "Edit Transaction" : "Add Transaction"}
         </h1>
-        <p className="text-muted-foreground mt-2 text-sm">
+        <p className="text-muted-foreground text-sm sm:text-base max-w-lg">
           {editId
-            ? "Update the details of your transaction below."
-            : "Fill in the details — or scan a receipt to auto-fill everything instantly."}
+            ? "Update your transaction details below to keep your records accurate."
+            : "Manually fill in the details, or simply scan a receipt and let AI do the heavy lifting."}
         </p>
       </div>
 
-      {/* Card wrapper for the form — overflow-visible so scanner popup can float above */}
-      <div className="rounded-2xl border border-border/50 dark:border-slate-700/50 bg-card dark:bg-slate-800/40 shadow-sm p-5 sm:p-7 overflow-visible">
-        <AddTransactionForm
-          accounts={accounts}
-          categories={defaultCategories}
-          editMode={!!editId}
-          initialData={initialData}
-        />
+      {/* Card wrapper for the form — completely overhauled premium glassmorphism */}
+      <div className="relative rounded-3xl border border-white/20 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 backdrop-blur-xl shadow-2xl shadow-purple-900/5 p-6 sm:p-10 overflow-visible transition-all duration-300 hover:shadow-purple-900/10 dark:shadow-none">
+        {/* Subtle inner highlight */}
+        <div className="absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/40 dark:ring-white/5 pointer-events-none" />
+        
+        <div className="relative z-10">
+          <AddTransactionForm
+            accounts={accounts}
+            categories={defaultCategories}
+            editMode={!!editId}
+            initialData={initialData}
+          />
+        </div>
       </div>
     </div>
   );
