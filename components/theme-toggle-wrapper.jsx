@@ -1,34 +1,36 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "./ui/button";
 
 export const ThemeToggleWrapper = () => {
-  const [theme, setTheme] = useState("light");
+  const [isDark, setIsDark] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Read the current state from the DOM — single source of truth
   useEffect(() => {
     setMounted(true);
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setTheme(savedTheme);
+    setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    
-    if (newTheme === "dark") {
+  const toggle = () => {
+    const next = !isDark;
+    setIsDark(next);
+
+    if (next) {
       document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     } else {
       document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
   };
 
+  // Render a placeholder icon before mount to avoid hydration mismatch
   if (!mounted) {
     return (
-      <Button variant="outline" size="icon" disabled>
+      <Button variant="outline" size="icon" aria-label="Toggle theme" disabled>
         <Sun className="h-4 w-4" />
       </Button>
     );
@@ -38,13 +40,15 @@ export const ThemeToggleWrapper = () => {
     <Button
       variant="outline"
       size="icon"
-      onClick={toggleTheme}
-      title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      onClick={toggle}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className="transition-all duration-200 hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:border-purple-400 dark:hover:border-purple-600"
     >
-      {theme === "light" ? (
-        <Moon className="h-4 w-4" />
+      {isDark ? (
+        <Sun className="h-4 w-4 text-amber-400 transition-transform duration-300 rotate-0 hover:rotate-45" />
       ) : (
-        <Sun className="h-4 w-4" />
+        <Moon className="h-4 w-4 text-slate-600 transition-transform duration-300" />
       )}
     </Button>
   );

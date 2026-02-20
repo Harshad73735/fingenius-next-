@@ -102,14 +102,8 @@ export async function getUserAccounts() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
-
   const accounts = await db.account.findMany({
-    where: { userId: user.id },
+    where: { user: { clerkUserId: userId } },
     orderBy: { createdAt: "desc" },
     include: { _count: { select: { transactions: true } } },
   });
@@ -121,12 +115,9 @@ export async function getDashboardData(limit = 10) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({ where: { clerkUserId: userId } });
-  if (!user) throw new Error("User not found");
-
-  // Get recent transactions with pagination
+  // Get recent transactions with pagination, skipping the user lookup by using relations
   const transactions = await db.transaction.findMany({
-    where: { userId: user.id },
+    where: { user: { clerkUserId: userId } },
     orderBy: { date: "desc" },
     take: limit, // Limit to last N transactions instead of all
   });

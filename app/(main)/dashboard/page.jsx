@@ -85,7 +85,20 @@ const DashboardPage = async () => {
   const defaultAccount = accounts?.find((a) => a.isDefault);
 
   return (
-    <div className="px-4 sm:px-6 pb-12 space-y-6 max-w-7xl mx-auto">
+    <div className="px-4 sm:px-6 pt-4 pb-12 space-y-8 max-w-7xl mx-auto">
+      {/* Personalized Greeting */}
+      <div className="space-y-1">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground dark:text-white flex items-center gap-2">
+          Good {
+            new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'
+          }, {user?.name?.split(' ')[0] || 'there'} 
+          <span className="text-2xl animate-bounce origin-bottom">👋</span>
+        </h1>
+        <p className="text-muted-foreground text-sm sm:text-base">
+          Here is your financial overview for today.
+        </p>
+      </div>
+
       {/* Profile update alert (only shown when needed by the component internally) */}
       <ProfileUpdateForm userData={user} />
 

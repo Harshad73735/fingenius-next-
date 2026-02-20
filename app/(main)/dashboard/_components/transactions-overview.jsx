@@ -54,7 +54,7 @@ const DashboardOverview = ({ accounts, transactions }) => {
     <div className="grid gap-4 md:grid-cols-2">
       {/* ── Recent Transactions ── */}
       <Card className="border border-border/50 dark:border-slate-700/50 shadow-sm dark:bg-slate-800/40">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-0 pb-3 gap-4 sm:gap-0">
           <div className="flex items-center gap-2">
             <LayoutList className="h-4 w-4 text-purple-500" />
             <CardTitle className="text-sm font-semibold text-foreground dark:text-white">Recent Transactions</CardTitle>
@@ -78,24 +78,56 @@ const DashboardOverview = ({ accounts, transactions }) => {
               <Link href="/transaction/create" className="text-xs text-purple-500 hover:underline">Add your first one →</Link>
             </div>
           ) : (
-            <div className="space-y-1">
-              {recentTransactions.map((t) => (
-                <div key={t.id} className="flex items-center justify-between py-2.5 px-2 rounded-lg hover:bg-muted/40 dark:hover:bg-slate-700/30 transition-colors group">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground dark:text-white truncate">
-                      {t.description || <span className="text-muted-foreground italic">No description</span>}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">{format(new Date(t.date), "MMM d, yyyy")}</p>
+            <div className="space-y-2">
+              {recentTransactions.map((t) => {
+                // Generate a consistent color based on the category string length or characters
+                const colorHash = t.category ? t.category.charCodeAt(0) + t.category.length : 0;
+                const badgeColor = COLORS[colorHash % COLORS.length];
+
+                return (
+                  <div key={t.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between py-3 px-3 rounded-xl border border-b-border/30 sm:border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-200 group cursor-pointer hover:border-border/40 gap-3 sm:gap-0">
+                    <div className="flex items-center gap-3.5 min-w-0 w-full sm:flex-1">
+                      {/* Premium Category Avatar */}
+                      <div 
+                        className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm text-white font-bold"
+                        style={{ background: `linear-gradient(135deg, ${badgeColor}dd, ${badgeColor}ff)` }}
+                      >
+                        {t.category ? t.category.charAt(0).toUpperCase() : '?'}
+                      </div>
+                      
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-foreground dark:text-white truncate group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                          {t.description || <span className="text-muted-foreground italic font-normal">No description</span>}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <p className="text-[11px] text-muted-foreground font-medium">{format(new Date(t.date), "MMM d, yyyy")}</p>
+                          <span className="w-1 h-1 rounded-full bg-border/80"></span>
+                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-bold truncate">
+                            {t.category}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Amount area drops down aligned to text on mobile */}
+                    <div className="flex items-center sm:flex-col sm:items-end justify-between w-full sm:w-auto pl-[3.25rem] sm:pl-0 shrink-0 gap-2 sm:gap-1">
+                      <div className={cn(
+                        "text-sm font-bold tabular-nums tracking-tight flex items-center",
+                        t.type === "EXPENSE" ? "text-foreground dark:text-white" : "text-emerald-600 dark:text-emerald-400"
+                      )}>
+                        {t.type === "EXPENSE" ? "-" : "+"}${t.amount.toFixed(2)}
+                      </div>
+                      {/* Tiny indicator pill */}
+                      <div className={cn(
+                        "text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-widest",
+                        t.type === "EXPENSE" ? "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400" : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                      )}>
+                        {t.type}
+                      </div>
+                    </div>
                   </div>
-                  <div className={cn(
-                    "flex items-center gap-0.5 text-sm font-semibold tabular-nums ml-3 shrink-0",
-                    t.type === "EXPENSE" ? "text-rose-500 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"
-                  )}>
-                    {t.type === "EXPENSE" ? <ArrowDownRight className="h-3.5 w-3.5" /> : <ArrowUpRight className="h-3.5 w-3.5" />}
-                    ${t.amount.toFixed(2)}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
 
               {accountTransactions.length > 5 && (
                 <Link
@@ -112,16 +144,14 @@ const DashboardOverview = ({ accounts, transactions }) => {
 
       {/* ── Monthly Expense Breakdown ── */}
       <Card className="border border-border/50 dark:border-slate-700/50 shadow-sm dark:bg-slate-800/40">
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
           <div className="flex items-center gap-2">
             <PieChartIcon className="h-4 w-4 text-pink-500" />
             <CardTitle className="text-sm font-semibold text-foreground dark:text-white">This Month's Spending</CardTitle>
           </div>
-          {totalExpenseThisMonth > 0 && (
-            <p className="text-xs text-muted-foreground mt-1">
-              Total: <span className="font-semibold text-rose-500">${totalExpenseThisMonth.toFixed(2)}</span>
-            </p>
-          )}
+          <p className="text-xs text-muted-foreground mt-1">
+            Total: <span className="font-semibold text-rose-500">${totalExpenseThisMonth.toFixed(2)}</span>
+          </p>
         </CardHeader>
         <CardContent className="px-3 pb-4">
           {pieChartData.length === 0 ? (

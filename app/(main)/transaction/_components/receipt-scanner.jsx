@@ -134,7 +134,7 @@ const ReceiptScanner = ({ onScanComplete }) => {
         type="file"
         accept="image/*"
         capture="environment"
-        className="hidden"
+        className="sr-only"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) { handleFileSelected(f); setShowMenu(false); } }}
       />
       {/* Gallery input (no capture — opens photo library on mobile) */}
@@ -143,7 +143,7 @@ const ReceiptScanner = ({ onScanComplete }) => {
         ref={galleryInputRef}
         type="file"
         accept="image/*"
-        className="hidden"
+        className="sr-only"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) { handleFileSelected(f); setShowMenu(false); } }}
       />
 
@@ -176,7 +176,7 @@ const ReceiptScanner = ({ onScanComplete }) => {
                 <label
                   htmlFor={CAMERA_INPUT_ID}
                   className="flex items-center gap-3.5 px-4 py-4 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/30 active:bg-purple-100 dark:active:bg-purple-900/40 transition-colors touch-manipulation select-none"
-                  onClick={() => setShowMenu(false)}
+                  onClick={() => setTimeout(() => setShowMenu(false), 200)}
                 >
                   <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 shadow-md shrink-0">
                     <Camera className="h-5 w-5 text-white" />
@@ -194,7 +194,7 @@ const ReceiptScanner = ({ onScanComplete }) => {
                 <label
                   htmlFor={GALLERY_INPUT_ID}
                   className="flex items-center gap-3.5 px-4 py-4 cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/30 active:bg-pink-100 dark:active:bg-pink-900/40 transition-colors touch-manipulation select-none"
-                  onClick={() => setShowMenu(false)}
+                  onClick={() => setTimeout(() => setShowMenu(false), 200)}
                 >
                   <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 shadow-md shrink-0">
                     <ImageIcon className="h-5 w-5 text-white" />
