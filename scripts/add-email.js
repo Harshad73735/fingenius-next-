@@ -21,7 +21,7 @@ const db = new PrismaClient();
       }
     });
 
-    console.log('✅ Secondary email added:', result.email);
+    console.log(' Secondary email added:', result.email);
     console.log('User will now receive budget alerts on both emails');
   } catch (error) {
     console.error('Error:', error.message);

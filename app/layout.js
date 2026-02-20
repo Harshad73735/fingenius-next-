@@ -4,6 +4,7 @@ import Header from "@/components/header";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/lib/theme-context";
+import NavigationProgress from "@/components/navigation-progress";
 
 const inter=Inter({subsets:["latin"]});
 
@@ -26,7 +27,8 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.className} bg-white dark:bg-slate-900 text-black dark:text-white transition-colors duration-300`}
       >
-        {/* {header} */}
+        {/* Global navigation progress bar */}
+        <NavigationProgress />
         <Header/>
         <main className="min-h-screen bg-white dark:bg-slate-900 mt-16">{children}</main>
       <Toaster richColors />

@@ -97,7 +97,8 @@ export async function getCurrentBudget(accountId) {
           }
 
           console.log("[Budget Alert] Sending email to:", emailsList);
-          const emailResponse = await sendEmail({
+          // Fire and forget email process - don't await to block render
+          sendEmail({
             to: emailsList,
             subject: "Budget Alert: You've exceeded your budget!",
             react: BudgetAlertEmail({
@@ -110,25 +111,23 @@ export async function getCurrentBudget(accountId) {
                   100
               ),
             }),
+          }).then(emailResponse => {
+            if (!emailResponse.success) {
+              console.error("[Budget Alert] Email send failed:", emailResponse.error);
+            } else {
+              console.log("[Budget Alert] Email sent successfully:", emailResponse.data);
+            }
+          }).catch(emailError => {
+             console.error("[Budget Alert] Error sending email:", emailError);
           });
 
-          if (!emailResponse.success) {
-            console.error("[Budget Alert] Email send failed:", emailResponse.error);
-            return {
-              budget: budget ? { ...budget, amount: budget.amount.toNumber() } : null,
-              currentExpenses,
-              emailError: emailResponse.error,
-            };
-          }
-
-          // Update last alert sent time
+          // Update last alert sent time immediately
           await db.budget.update({
             where: { userId: user.id },
             data: { lastAlertSent: now },
           });
-          console.log("[Budget Alert] Email sent successfully:", emailResponse.data);
         } catch (emailError) {
-          console.error("[Budget Alert] Error sending email:", emailError);
+          console.error("[Budget Alert] Error setting up email task:", emailError);
         }
       } else {
         console.log("[Budget Alert] Alert already sent in the last 24 hours");

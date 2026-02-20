@@ -92,18 +92,16 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
     }  
   };
 
-    useEffect(() => {
+  useEffect(() => {
     if (transactionResult?.success && !transactionLoading) {
-      toast.success(
-        editMode
-          ? "Transaction updated successfully"
-          :
-          "Transaction created successfully"
-      );
-      reset();
+      // Navigate immediately — don't wait for anything else
       router.push(`/account/${transactionResult.data.accountId}`);
+      // Toast shown after navigation is queued
+      toast.success(editMode ? "Transaction updated successfully" : "Transaction created successfully");
+      reset();
     }
-  }, [transactionResult, transactionLoading,editMode]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactionResult, transactionLoading]);
 
   const filteredCategories = categories.filter(
     (category) => category.type === type
@@ -119,7 +117,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
       if (scannedData.category) {
         setValue("category", scannedData.category);
       }
-      toast.success("Receipt scanned successfully");
+      // Toast is already shown by ReceiptScanner component — do NOT call it again here
     }
   };
 
