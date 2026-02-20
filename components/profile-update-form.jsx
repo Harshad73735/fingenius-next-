@@ -67,8 +67,11 @@ export const ProfileUpdateForm = ({ userData }) => {
 
       {/* Modal / Form */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center" onClick={() => setIsOpen(false)}>
+          <div 
+            className="bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 w-full sm:max-w-md max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 className="text-xl font-bold mb-4">Update Profile</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -99,7 +102,7 @@ export const ProfileUpdateForm = ({ userData }) => {
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select Currency" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper" side="top" className="max-h-[200px]">
                     {SUPPORTED_CURRENCIES.map((c) => (
                       <SelectItem key={c.code} value={c.code}>
                         {c.code} ({c.symbol}) - {c.name}
