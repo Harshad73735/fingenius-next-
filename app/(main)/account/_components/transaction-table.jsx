@@ -16,10 +16,11 @@ import { ArrowDownRight, ArrowUpRight, ChevronDown, ChevronUp, Clock, MoreHorizo
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { formatCurrency } from '@/lib/currency';
 
 const ITEMS_PER_PAGE = 10;
 
-const TransactionTable = ({ transactions }) => {
+const TransactionTable = ({ transactions, userCurrency }) => {
   const router = useRouter();
   const [selectedIds, setSelectedIds] = useState([]);
   const [sortConfig, setSortConfig] = useState({ field: "date", direction: "desc" });
@@ -184,8 +185,8 @@ const TransactionTable = ({ transactions }) => {
                 <TableRow
                   key={t.id}
                   className={cn(
-                    "border-b border-border/30 dark:border-slate-700/40 transition-colors duration-200",
-                    "hover:bg-slate-50/80 dark:hover:bg-slate-800/60 cursor-default",
+                    "border-b border-border/30 dark:border-slate-700/40 transition-all duration-300",
+                    "hover:bg-white/60 dark:hover:bg-slate-800/60 cursor-default hover:shadow-sm hover:-translate-y-[1px] relative",
                     selectedIds.includes(t.id) && "bg-purple-50/60 dark:bg-purple-900/10"
                   )}
                 >
@@ -223,7 +224,7 @@ const TransactionTable = ({ transactions }) => {
                     )}>
                       <span className="font-bold tabular-nums text-sm">
                         {t.type === "EXPENSE" ? "-" : "+"}
-                        ${t.amount.toFixed(2)}
+                        {formatCurrency(t.amount, userCurrency)}
                       </span>
                       {/* Indicator pill */}
                       <span className={cn(

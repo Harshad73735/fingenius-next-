@@ -19,10 +19,10 @@ import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import ReceiptScanner from "./receipt-scanner";
-
+import { formatCurrency } from "@/lib/currency";
 
 const AddTransactionForm = ({ accounts, categories,editMode = false,
-  initialData = null, }) => {
+  initialData = null, userCurrency }) => {
     const router=useRouter();
     const searchParams = useSearchParams();
   const editId = searchParams.get("edit");
@@ -154,7 +154,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
         <div className="space-y-2">
           <label className="text-sm font-semibold text-foreground/90 tracking-wide uppercase text-[11px]">Amount</label>
           <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-2xl font-bold text-muted-foreground">$</span>
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-2xl font-bold text-muted-foreground">{formatCurrency(0, userCurrency).replace(/[0-9.,\s]/g, '')}</span>
             <Input
               type="number"
               step="0.01"
@@ -180,7 +180,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
             <SelectContent className="rounded-xl border-border/60">
               {accounts.map((account) => (
                 <SelectItem key={account.id} value={account.id}>
-                  {account.name} (${parseFloat(account.balance).toFixed(2)})
+                  {account.name} ({formatCurrency(account.balance, userCurrency)})
                 </SelectItem>
               ))}
               <CreateAccountDrawer>

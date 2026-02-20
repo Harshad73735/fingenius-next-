@@ -6,6 +6,7 @@ import { endOfDay, format, startOfDay, subDays } from 'date-fns';
 import { TrendingDown, TrendingUp, Wallet } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { formatCurrency } from '@/lib/currency';
 
 const DATE_RANGES = {
   "7D": { label: "Last 7 Days", days: 7 },
@@ -16,7 +17,7 @@ const DATE_RANGES = {
 };
 
 // Custom tooltip for the bar chart
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label, userCurrency }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-border/60 dark:border-slate-700/60 shadow-xl p-3.5 min-w-[140px]">
@@ -27,14 +28,14 @@ const CustomTooltip = ({ active, payload, label }) => {
             <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.fill }} />
             <span className="text-xs text-muted-foreground capitalize">{p.name}</span>
           </div>
-          <span className="text-xs font-bold text-foreground dark:text-white">${p.value.toFixed(2)}</span>
+          <span className="text-xs font-bold text-foreground dark:text-white">{formatCurrency(p.value, userCurrency)}</span>
         </div>
       ))}
     </div>
   );
 };
 
-const AccountChart = ({ transactions }) => {
+const AccountChart = ({ transactions, userCurrency }) => {
   const [dateRange, setDateRange] = useState("1M");
 
   const filteredData = useMemo(() => {
@@ -91,7 +92,7 @@ const AccountChart = ({ transactions }) => {
               <span className="text-[10px] font-bold uppercase tracking-widest">Income</span>
             </div>
             <p className="text-base sm:text-xl font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums tracking-tight">
-              ${totals.income.toFixed(2)}
+              {formatCurrency(totals.income, userCurrency)}
             </p>
           </div>
           <div className="flex flex-col items-center gap-1 rounded-2xl bg-rose-50/80 dark:bg-rose-900/20 border border-rose-200/60 dark:border-rose-800/40 p-4 shadow-sm">
@@ -100,7 +101,7 @@ const AccountChart = ({ transactions }) => {
               <span className="text-[10px] font-bold uppercase tracking-widest">Expense</span>
             </div>
             <p className="text-base sm:text-xl font-extrabold text-rose-500 dark:text-rose-400 tabular-nums tracking-tight">
-              ${totals.expense.toFixed(2)}
+              {formatCurrency(totals.expense, userCurrency)}
             </p>
           </div>
           <div className={`flex flex-col items-center gap-1 rounded-2xl p-4 border shadow-sm ${
@@ -113,7 +114,7 @@ const AccountChart = ({ transactions }) => {
               <span className="text-[10px] font-bold uppercase tracking-widest">Net</span>
             </div>
             <p className={`text-base sm:text-xl font-extrabold tabular-nums tracking-tight ${net >= 0 ? "text-blue-600 dark:text-blue-400" : "text-orange-500 dark:text-orange-400"}`}>
-              {net >= 0 ? "+" : ""}${net.toFixed(2)}
+              {net >= 0 ? "+" : ""}{formatCurrency(net, userCurrency)}
             </p>
           </div>
         </div>
@@ -140,9 +141,9 @@ const AccountChart = ({ transactions }) => {
                   tickLine={false}
                   axisLine={false}
                   style={{ fontSize: "11px", fill: "hsl(var(--muted-foreground))" }}
-                  tickFormatter={(v) => `$${v}`}
+                  tickFormatter={(v) => formatCurrency(v, userCurrency).replace(/\.00$/, '')}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: "hsl(var(--muted))", opacity: 0.5, radius: 6 }} />
+                <Tooltip content={<CustomTooltip userCurrency={userCurrency} />} cursor={{ fill: "hsl(var(--muted))", opacity: 0.5, radius: 6 }} />
                 <Bar dataKey="income" name="Income" fill="#10b981" radius={[6, 6, 2, 2]} />
                 <Bar dataKey="expense" name="Expense" fill="#f43f5e" radius={[6, 6, 2, 2]} />
               </BarChart>

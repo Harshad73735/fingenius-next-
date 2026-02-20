@@ -4,8 +4,10 @@ import { getAccountWithTransactions } from "@/actions/accounts";
 import TransactionTable from "../_components/transaction-table";
 import AccountChart from "../_components/account-chart";
 import { ArrowDownRight, ArrowUpRight, CreditCard } from "lucide-react";
+import { checkUser } from "@/lib/checkUser";
+import { formatCurrency } from "@/lib/currency";
 
-async function AccountContent({ id }) {
+async function AccountContent({ id, userCurrency }) {
   const accountData = await getAccountWithTransactions(id);
   if (!accountData) notFound();
 
@@ -42,7 +44,7 @@ async function AccountContent({ id }) {
           <div className="text-left sm:text-right">
             <p className="text-xs text-white/60 uppercase tracking-wide mb-1">Current Balance</p>
             <p className="text-3xl sm:text-4xl font-bold text-white tabular-nums">
-              ${parseFloat(account.balance).toFixed(2)}
+              {formatCurrency(account.balance, userCurrency)}
             </p>
           </div>
         </div>
@@ -55,7 +57,7 @@ async function AccountContent({ id }) {
             </div>
             <div>
               <p className="text-[10px] text-white/60 uppercase tracking-wide">Income</p>
-              <p className="text-sm font-semibold text-emerald-300 tabular-nums">${totalIncome.toFixed(2)}</p>
+              <p className="text-sm font-semibold text-emerald-300 tabular-nums">{formatCurrency(totalIncome, userCurrency)}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -64,19 +66,19 @@ async function AccountContent({ id }) {
             </div>
             <div>
               <p className="text-[10px] text-white/60 uppercase tracking-wide">Expenses</p>
-              <p className="text-sm font-semibold text-rose-300 tabular-nums">${totalExpenses.toFixed(2)}</p>
+              <p className="text-sm font-semibold text-rose-300 tabular-nums">{formatCurrency(totalExpenses, userCurrency)}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* ─── Chart ─── */}
-      <AccountChart transactions={transactions} />
+      <AccountChart transactions={transactions} userCurrency={userCurrency} />
 
       {/* ─── Transactions ─── */}
       <div>
         <h2 className="text-base font-semibold text-foreground dark:text-white mb-3">All Transactions</h2>
-        <TransactionTable transactions={transactions} />
+        <TransactionTable transactions={transactions} userCurrency={userCurrency} />
       </div>
     </div>
   );
@@ -99,9 +101,10 @@ function AccountSkeleton() {
 
 export default async function AccountPage({ params }) {
   const { id } = await params;
+  const user = await checkUser();
   return (
     <Suspense fallback={<AccountSkeleton />}>
-      <AccountContent id={id} />
+      <AccountContent id={id} userCurrency={user?.currency} />
     </Suspense>
   );
 }

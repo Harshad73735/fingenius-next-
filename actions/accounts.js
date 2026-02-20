@@ -176,7 +176,7 @@ export async function updateDefaultAccount(accountId) {
   }
 }
 
-export async function updateUserProfile({ email, name }) {
+export async function updateUserProfile({ email, name, currency }) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -193,6 +193,7 @@ export async function updateUserProfile({ email, name }) {
       data: {
         email: email || user.email,
         name: name || user.name,
+        currency: currency || user.currency,
       },
     });
 

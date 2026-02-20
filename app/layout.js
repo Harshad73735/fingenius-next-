@@ -31,16 +31,21 @@ export default function RootLayout({ children }) {
           <ThemeScript />
         </head>
         <body
-          className={`${inter.className} bg-white dark:bg-slate-900 text-black dark:text-white transition-colors duration-300 overflow-x-hidden`}
+          className={`${inter.className} bg-slate-50 dark:bg-[#0B0F19] text-black dark:text-white transition-colors duration-300 overflow-x-hidden`}
         >
+          {/* Global Ambient Background */}
+          <div className="fixed inset-0 pointer-events-none z-[-1]">
+            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-500/10 rounded-full blur-[120px] mix-blend-screen dark:opacity-30 animate-mesh" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/10 rounded-full blur-[120px] mix-blend-screen dark:opacity-30 animate-mesh" style={{ animationDelay: '2s' }} />
+          </div>
           <NavigationProgress />
           <Header />
-          <main className="min-h-screen bg-white dark:bg-slate-900 mt-16 overflow-x-hidden">
+          <main className="min-h-screen mt-16 overflow-x-hidden relative z-0">
             {children}
           </main>
           <Toaster richColors />
-          <footer className="bg-blue-50 dark:bg-slate-800 py-12 border-t border-border/40">
-            <div className="container mx-auto px-4 text-center text-sm text-gray-600 dark:text-gray-400">
+          <footer className="py-12 border-t border-slate-200/50 dark:border-slate-800/50 bg-white/30 dark:bg-slate-900/30 backdrop-blur-md">
+            <div className="container mx-auto px-4 text-center text-sm font-medium text-slate-600 dark:text-slate-400">
               <p>Made with 💗 by FinGenius</p>
             </div>
           </footer>

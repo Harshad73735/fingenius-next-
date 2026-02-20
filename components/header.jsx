@@ -26,14 +26,14 @@ const Header = async () => {
        
           <div className="flex items-center gap-1 sm:gap-4 shrink-0">
             <SignedIn>
-              <Link href={"/dashboard"} className="flex flex-col sm:flex-row items-center justify-center">
+              <Link href={"/dashboard"} prefetch={true} className="flex flex-col sm:flex-row items-center justify-center">
                 <Button variant="ghost" className="px-3 sm:px-4 h-9 sm:h-10 rounded-xl font-semibold text-muted-foreground hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200">
                   <LayoutDashboard size={18} className="sm:mr-2" />
                   <span className="hidden sm:inline">Dashboard</span>
                 </Button>
               </Link>
 
-              <Link href={"/transaction/create"} className="flex items-center">
+              <Link href={"/transaction/create"} prefetch={true} className="flex items-center">
                 <Button className="px-3 sm:px-4 h-9 sm:h-10 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-md shadow-purple-500/20 transition-all duration-200 flex items-center gap-2">
                   <PenBox size={18} />
                   <span className="hidden sm:inline">Add Transaction</span>

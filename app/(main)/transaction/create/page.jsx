@@ -9,7 +9,7 @@ const AddTransactionPage = async ({ searchParams }) => {
   const params = await searchParams;
   const editId = params?.edit;
 
-  await checkUser();
+  const user = await checkUser();
   const accounts = await getUserAccounts();
 
   let initialData = null;
@@ -46,6 +46,7 @@ const AddTransactionPage = async ({ searchParams }) => {
             categories={defaultCategories}
             editMode={!!editId}
             initialData={initialData}
+            userCurrency={user?.currency}
           />
         </div>
       </div>

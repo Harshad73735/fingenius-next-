@@ -8,8 +8,9 @@ import useFetch from '@/hooks/use-fetch';
 import { AlertTriangle, Check, Pencil, Target, TrendingDown, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { formatCurrency } from '@/lib/currency';
 
-const BudgetProgress = ({ initialBudget, currentExpenses }) => {
+const BudgetProgress = ({ initialBudget, currentExpenses, userCurrency }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newBudget, setNewBudget] = useState(initialBudget?.amount?.toString() || "");
 
@@ -73,7 +74,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
         {/* Edit mode */}
         {isEditing ? (
           <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/50 dark:bg-slate-800 border border-border/50">
-            <span className="text-sm text-muted-foreground">$</span>
+            <span className="text-sm text-muted-foreground">{formatCurrency(0, userCurrency).replace(/[0-9.,\s]/g, '')}</span>
             <Input
               type="number"
               value={newBudget}
@@ -107,15 +108,15 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
             <div className="flex items-end justify-between">
               <div>
                 <p className="text-2xl font-bold tabular-nums text-foreground dark:text-white">
-                  ${currentExpenses.toFixed(2)}
+                  {formatCurrency(currentExpenses, userCurrency)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  of <span className="font-medium text-foreground dark:text-white">${initialBudget.amount.toFixed(2)}</span> budget
+                  of <span className="font-medium text-foreground dark:text-white">{formatCurrency(initialBudget.amount, userCurrency)}</span> budget
                 </p>
               </div>
               <div className="text-right">
                 <p className={`text-base font-semibold tabular-nums ${isOver ? "text-rose-500" : "text-emerald-600 dark:text-emerald-400"}`}>
-                  {isOver ? `$${Math.abs(remaining).toFixed(2)} over` : `-$${remaining.toFixed(2)}`}
+                  {isOver ? `${formatCurrency(Math.abs(remaining), userCurrency)} over` : `-${formatCurrency(remaining, userCurrency)}`}
                 </p>
                 <p className="text-xs text-muted-foreground">{isOver ? "over budget" : "remaining"}</p>
               </div>

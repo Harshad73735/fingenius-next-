@@ -4,7 +4,9 @@ import { updateUserProfile } from "@/actions/accounts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useFetch from "@/hooks/use-fetch";
-import { User } from "lucide-react";
+import { SUPPORTED_CURRENCIES } from "@/lib/currency";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { User, Globe, Settings } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
@@ -12,6 +14,7 @@ export const ProfileUpdateForm = ({ userData }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState(userData?.email || "");
   const [name, setName] = useState(userData?.name || "");
+  const [currency, setCurrency] = useState(userData?.currency || "USD");
 
   const { loading, fn: updateProfileFn, data: result } = useFetch(updateUserProfile);
 
@@ -21,7 +24,7 @@ export const ProfileUpdateForm = ({ userData }) => {
       toast.error("Please fill in all fields");
       return;
     }
-    await updateProfileFn({ email, name });
+    await updateProfileFn({ email, name, currency });
   };
 
   React.useEffect(() => {
@@ -48,7 +51,19 @@ export const ProfileUpdateForm = ({ userData }) => {
             Update Profile
           </Button>
         </div>
-      ) : null}
+      ) : (
+        <div className="flex justify-end items-center mr-2 -mt-10 sm:-mt-14 relative z-10 w-fit ml-auto">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsOpen(true)}
+            className="text-muted-foreground hover:text-purple-600 dark:hover:text-purple-400 font-medium"
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            Preferences
+          </Button>
+        </div>
+      )}
 
       {/* Modal / Form */}
       {isOpen && (
@@ -76,7 +91,24 @@ export const ProfileUpdateForm = ({ userData }) => {
                   required
                 />
               </div>
-              <div className="flex gap-3 justify-end">
+              <div>
+                <label className="block text-sm font-medium mb-1 flex items-center gap-1.5">
+                  <Globe className="h-4 w-4 text-purple-500" /> Default Currency
+                </label>
+                <Select value={currency} onValueChange={setCurrency}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SUPPORTED_CURRENCIES.map((c) => (
+                      <SelectItem key={c.code} value={c.code}>
+                        {c.code} ({c.symbol}) - {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-3 justify-end pt-2">
                 <Button
                   type="button"
                   variant="outline"

@@ -4,13 +4,15 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import useFetch from '@/hooks/use-fetch';
-import { ArrowDownRight, ArrowUpRight, TrendingUp } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, TrendingUp, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { formatCurrency } from '@/lib/currency';
 
-const AccountCard = ({ account }) => {
+const AccountCard = ({ account, userCurrency }) => {
   const { name, type, balance, id, isDefault } = account;
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const {
     loading: updateDefaultLoading,
@@ -118,13 +120,27 @@ const AccountCard = ({ account }) => {
           </svg>
         </div>
 
-        <Link href={`/account/${id}`} className="mt-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-lg -m-2 p-2">
+        <Link 
+          href={`/account/${id}`} 
+          prefetch={true} 
+          onClick={() => setIsNavigating(true)}
+          className="mt-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-lg -m-2 p-2 hover:bg-white/5 transition-colors"
+        >
           <div className="flex items-end justify-between">
             <div className="space-y-0.5">
               <p className="text-sm font-medium text-white/70">Current Balance</p>
               <div className="text-3xl font-bold tracking-tight text-white drop-shadow-md">
-                ${parseFloat(balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {formatCurrency(balance, userCurrency)}
               </div>
+            </div>
+            {/* Visual Indicator for Navigation */}
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-white/80 group-hover:text-white transition-colors bg-white/10 px-2.5 py-1.5 rounded-full backdrop-blur-sm">
+              <span className="hidden sm:inline">Transactions</span>
+              {isNavigating ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              )}
             </div>
           </div>
         </Link>

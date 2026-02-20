@@ -60,20 +60,21 @@ const OverviewSkeleton = () => (
 // ──────────────────────────────────────────────
 // Independently suspended sections
 // ──────────────────────────────────────────────
-async function BudgetSection({ defaultAccount }) {
+async function BudgetSection({ defaultAccount, userCurrency }) {
   if (!defaultAccount) return null;
   const budgetData = await getCurrentBudget(defaultAccount.id);
   return (
     <BudgetProgress
       initialBudget={budgetData?.budget}
       currentExpenses={budgetData?.currentExpenses || 0}
+      userCurrency={userCurrency}
     />
   );
 }
 
-async function OverviewSection({ accounts }) {
+async function OverviewSection({ accounts, userCurrency }) {
   const transactions = await getDashboardData(20);
-  return <DashboardOverview accounts={accounts} transactions={transactions || []} />;
+  return <DashboardOverview accounts={accounts} transactions={transactions || []} userCurrency={userCurrency} />;
 }
 
 // ──────────────────────────────────────────────
@@ -104,12 +105,12 @@ const DashboardPage = async () => {
 
       {/* Budget card */}
       <Suspense fallback={<BudgetSkeleton />}>
-        <BudgetSection defaultAccount={defaultAccount} />
+        <BudgetSection defaultAccount={defaultAccount} userCurrency={user?.currency} />
       </Suspense>
 
       {/* Overview: recent transactions + expense donut */}
       <Suspense fallback={<OverviewSkeleton />}>
-        <OverviewSection accounts={accounts} />
+        <OverviewSection accounts={accounts} userCurrency={user?.currency} />
       </Suspense>
 
       {/* Accounts grid */}
@@ -130,7 +131,7 @@ const DashboardPage = async () => {
           </CreateAccountDrawer>
 
           {accounts.map((account) => (
-            <AccountCard key={account.id} account={account} />
+            <AccountCard key={account.id} account={account} userCurrency={user?.currency} />
           ))}
         </div>
       </div>
