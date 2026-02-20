@@ -166,12 +166,11 @@ export async function getTransaction(id) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  // Parallel: user lookup happens while we already have userId
-  const user = await db.user.findUnique({ where: { clerkUserId: userId } });
-  if (!user) throw new Error("User not found");
-
-  const transaction = await db.transaction.findUnique({
-    where: { id, userId: user.id },
+  const transaction = await db.transaction.findFirst({
+    where: { 
+      id, 
+      user: { clerkUserId: userId } 
+    },
   });
 
   if (!transaction) throw new Error("Transaction not found");

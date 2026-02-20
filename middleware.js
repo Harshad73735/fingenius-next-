@@ -28,15 +28,10 @@ const isProtectedRoute = createRouteMatcher([
 // docker run -p 3000:3000 fingenius-next
 
 
-export default clerkMiddleware(async(auth,req)=>{
-  const { userId } = await auth();
-  console.log("[middleware] userId:", userId, "path:", req.nextUrl.pathname);
-  if (!userId && isProtectedRoute(req)) {
-    const { redirectToSignIn } = await auth();
-    console.log("[middleware] Redirecting to sign-in for path:", req.nextUrl.pathname);
-    return redirectToSignIn();
+export default clerkMiddleware(async(auth, req)=>{
+  if (isProtectedRoute(req)) {
+    await auth.protect();
   }
-  //   return NextResponse.next();
 });
 
 export const config = {
@@ -44,5 +39,4 @@ export const config = {
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
     '/(api|trpc)(.*)',
   ],
-  runtime: 'nodejs',  // ✅ Add this line
 };

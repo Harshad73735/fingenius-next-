@@ -7,10 +7,15 @@ import { ArrowDownRight, ArrowUpRight, CreditCard } from "lucide-react";
 import { checkUser } from "@/lib/checkUser";
 import { formatCurrency } from "@/lib/currency";
 
-async function AccountContent({ id, userCurrency }) {
-  const accountData = await getAccountWithTransactions(id);
+async function AccountContent({ id }) {
+  const [accountData, user] = await Promise.all([
+    getAccountWithTransactions(id),
+    checkUser()
+  ]);
+  
   if (!accountData) notFound();
 
+  const userCurrency = user?.currency;
   const { transactions, ...account } = accountData;
   const totalIncome = transactions.filter(t => t.type === "INCOME").reduce((s, t) => s + t.amount, 0);
   const totalExpenses = transactions.filter(t => t.type === "EXPENSE").reduce((s, t) => s + t.amount, 0);
@@ -101,10 +106,9 @@ function AccountSkeleton() {
 
 export default async function AccountPage({ params }) {
   const { id } = await params;
-  const user = await checkUser();
   return (
     <Suspense fallback={<AccountSkeleton />}>
-      <AccountContent id={id} userCurrency={user?.currency} />
+      <AccountContent id={id} />
     </Suspense>
   );
 }

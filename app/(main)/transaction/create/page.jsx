@@ -8,14 +8,15 @@ import { getTransaction } from '@/actions/transaction';
 const AddTransactionPage = async ({ searchParams }) => {
   const params = await searchParams;
   const editId = params?.edit;
-
-  const user = await checkUser();
-  const accounts = await getUserAccounts();
+  // Parallelize the mandatory fetching
+  const [user, accounts] = await Promise.all([
+    checkUser(),
+    getUserAccounts(),
+  ]);
 
   let initialData = null;
   if (editId) {
-    const transaction = await getTransaction(editId);
-    initialData = transaction;
+    initialData = await getTransaction(editId);
   }
 
   return (
@@ -24,11 +25,11 @@ const AddTransactionPage = async ({ searchParams }) => {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-xl h-64 bg-purple-500/10 dark:bg-purple-600/10 blur-[100px] rounded-full pointer-events-none -z-10" />
 
       {/* Premium page header */}
-      <div className="mb-10 text-center sm:text-left">
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight gradient-title mb-3">
+      <div className="mb-12 flex flex-col items-center text-center">
+        <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight gradient-title mb-4">
           {editId ? "Edit Transaction" : "Add Transaction"}
         </h1>
-        <p className="text-muted-foreground text-sm sm:text-base max-w-lg">
+        <p className="text-muted-foreground text-base sm:text-lg max-w-xl leading-relaxed">
           {editId
             ? "Update your transaction details below to keep your records accurate."
             : "Manually fill in the details, or simply scan a receipt and let AI do the heavy lifting."}

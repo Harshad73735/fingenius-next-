@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -7,6 +7,10 @@ import { ThemeScript } from "@/components/theme-script";
 import NavigationProgress from "@/components/navigation-progress";
 
 const inter = Inter({ subsets: ["latin"] });
+const outfit = Outfit({ 
+  subsets: ["latin"],
+  variable: "--font-outfit",
+});
 
 export const metadata = {
   title: "FinGenius",
@@ -31,7 +35,7 @@ export default function RootLayout({ children }) {
           <ThemeScript />
         </head>
         <body
-          className={`${inter.className} bg-slate-50 dark:bg-[#0B0F19] text-black dark:text-white transition-colors duration-300 overflow-x-hidden`}
+          className={`${inter.className} ${outfit.variable} bg-slate-50 dark:bg-[#0B0F19] text-black dark:text-white transition-colors duration-300 overflow-x-hidden`}
         >
           {/* Global Ambient Background */}
           <div className="fixed inset-0 pointer-events-none z-[-1]">

@@ -131,7 +131,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
 
       {/* Type */}
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-foreground/90 tracking-wide uppercase text-[11px]">Type</label>
+        <label className="text-xs font-semibold text-purple-600 dark:text-purple-400 tracking-wider uppercase">Type</label>
         <Select
           onValueChange={(value) => setValue("type", value)}
           defaultValue={type}
@@ -152,7 +152,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
       {/* Amount and Account */}
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground/90 tracking-wide uppercase text-[11px]">Amount</label>
+          <label className="text-xs font-semibold text-purple-600 dark:text-purple-400 tracking-wider uppercase">Amount</label>
           <div className="relative">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-2xl font-bold text-muted-foreground">{formatCurrency(0, userCurrency).replace(/[0-9.,\s]/g, '')}</span>
             <Input
@@ -169,7 +169,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground/90 tracking-wide uppercase text-[11px]">Account</label>
+          <label className="text-xs font-semibold text-purple-600 dark:text-purple-400 tracking-wider uppercase">Account</label>
           <Select
             onValueChange={(value) => setValue("accountId", value)}
             defaultValue={getValues("accountId")}
@@ -201,7 +201,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
 
       {/* Category */}
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-foreground/90 tracking-wide uppercase text-[11px]">Category</label>
+        <label className="text-xs font-semibold text-purple-600 dark:text-purple-400 tracking-wider uppercase">Category</label>
         <Select
           onValueChange={(value) => setValue("category", value)}
           defaultValue={getValues("category")}
@@ -224,7 +224,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
 
       {/* Date */}
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-foreground/90 tracking-wide uppercase text-[11px]">Date</label>
+        <label className="text-xs font-semibold text-purple-600 dark:text-purple-400 tracking-wider uppercase">Date</label>
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -257,7 +257,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
 
       {/* Description */}
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-foreground/90 tracking-wide uppercase text-[11px]">Description (Optional)</label>
+        <label className="text-xs font-semibold text-purple-600 dark:text-purple-400 tracking-wider uppercase">Description (Optional)</label>
         <Input 
           placeholder="What was this for?" 
           className="h-12 rounded-xl border-border/60 bg-white/50 dark:bg-slate-900/50 focus-visible:ring-purple-500/50"
@@ -270,8 +270,8 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
 
       {/* Recurring Toggle */}
       <div className="flex flex-row items-center justify-between rounded-xl border border-border/60 bg-white/50 dark:bg-slate-900/50 p-4 shadow-sm transition-all hover:shadow-md">
-        <div className="space-y-0.5">
-          <label className="text-sm font-semibold text-foreground/90 tracking-wide uppercase">Recurring Transaction</label>
+        <div className="space-y-1">
+          <label className="text-xs font-semibold text-purple-600 dark:text-purple-400 tracking-wider uppercase break-words block pr-4">Recurring Transaction</label>
           <div className="text-xs text-muted-foreground">
             Set up an automatic schedule for this transaction
           </div>
@@ -286,7 +286,7 @@ const AddTransactionForm = ({ accounts, categories,editMode = false,
       {/* Recurring Interval */}
       {isRecurring && (
         <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-          <label className="text-sm font-semibold text-foreground/90 tracking-wide uppercase text-[11px]">Recurring Interval</label>
+          <label className="text-xs font-semibold text-purple-600 dark:text-purple-400 tracking-wider uppercase">Recurring Interval</label>
           <Select
             onValueChange={(value) => setValue("recurringInterval", value)}
             defaultValue={getValues("recurringInterval")}

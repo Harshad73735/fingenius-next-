@@ -52,7 +52,7 @@ export const ProfileUpdateForm = ({ userData }) => {
           </Button>
         </div>
       ) : (
-        <div className="flex justify-end items-center mr-2 -mt-10 sm:-mt-14 relative z-10 w-fit ml-auto">
+        <div className="flex justify-end items-center">
           <Button
             variant="ghost"
             size="sm"

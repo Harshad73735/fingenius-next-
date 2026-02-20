@@ -81,51 +81,80 @@ async function OverviewSection({ accounts, userCurrency }) {
 // Dashboard page
 // ──────────────────────────────────────────────
 const DashboardPage = async () => {
-  const user = await checkUser();
-  const accounts = await getUserAccounts();
+  const [user, accounts] = await Promise.all([
+    checkUser(),
+    getUserAccounts(),
+  ]);
   const defaultAccount = accounts?.find((a) => a.isDefault);
 
   return (
-    <div className="px-4 sm:px-6 pt-4 pb-12 space-y-8 max-w-7xl mx-auto">
-      {/* Personalized Greeting */}
-      <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground dark:text-white flex items-center gap-2">
-          Good {
-            new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'
-          }, {user?.name?.split(' ')[0] || 'there'} 
-          <span className="text-2xl animate-bounce origin-bottom">👋</span>
-        </h1>
-        <p className="text-muted-foreground text-sm sm:text-base">
-          Here is your financial overview for today.
-        </p>
-      </div>
+    <div className="px-4 sm:px-6 pt-4 pb-16 max-w-7xl mx-auto">
 
-      {/* Profile update alert (only shown when needed by the component internally) */}
-      <ProfileUpdateForm userData={user} />
+      {/* ═══════════════ HERO SECTION ═══════════════ */}
+      <section className="relative rounded-3xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/30 dark:border-slate-700/50 shadow-xl shadow-purple-500/5 p-6 sm:p-10 mt-2 overflow-hidden">
+        {/* Decorative gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/60 via-purple-50/40 to-pink-50/60 dark:from-indigo-950/30 dark:via-purple-950/20 dark:to-pink-950/30 rounded-3xl" />
+        <div className="absolute -top-20 -right-20 w-56 h-56 bg-purple-400/15 dark:bg-purple-500/10 blur-[80px] rounded-full pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-56 h-56 bg-blue-400/15 dark:bg-blue-500/10 blur-[80px] rounded-full pointer-events-none" />
 
-      {/* Budget card */}
-      <Suspense fallback={<BudgetSkeleton />}>
-        <BudgetSection defaultAccount={defaultAccount} userCurrency={user?.currency} />
-      </Suspense>
+        {/* Hero content + Preferences in top-right */}
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-bold text-purple-600 dark:text-purple-400 tracking-widest uppercase">
+              Dashboard Overview
+            </p>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground dark:text-white leading-tight">
+              Good {
+                new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'
+              }, {user?.name?.split(' ')[0] || 'there'}
+              <span className="inline-block ml-2 text-3xl sm:text-4xl animate-bounce origin-bottom">👋</span>
+            </h1>
+            <p className="text-muted-foreground text-sm sm:text-base max-w-lg leading-relaxed mt-1">
+              Here's what is happening with your finances today.
+            </p>
+          </div>
 
-      {/* Overview: recent transactions + expense donut */}
-      <Suspense fallback={<OverviewSkeleton />}>
-        <OverviewSection accounts={accounts} userCurrency={user?.currency} />
-      </Suspense>
+          {/* Preferences button – top-right of hero */}
+          <div className="shrink-0">
+            <ProfileUpdateForm userData={user} />
+          </div>
+        </div>
+      </section>
 
-      {/* Accounts grid */}
-      <div>
-        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Your Accounts</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Add New Account card */}
+      {/* ═══════════════ BUDGET ═══════════════ */}
+      <section className="mt-8">
+        <Suspense fallback={<BudgetSkeleton />}>
+          <BudgetSection defaultAccount={defaultAccount} userCurrency={user?.currency} />
+        </Suspense>
+      </section>
+
+      {/* ═══════════════ TRANSACTIONS & SPENDING ═══════════════ */}
+      <section className="mt-8">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="h-7 w-1 rounded-full bg-gradient-to-b from-purple-500 to-blue-500" />
+          <h2 className="text-xl font-bold tracking-tight text-foreground dark:text-white">Activity & Spending</h2>
+        </div>
+        <Suspense fallback={<OverviewSkeleton />}>
+          <OverviewSection accounts={accounts} userCurrency={user?.currency} />
+        </Suspense>
+      </section>
+
+      {/* ═══════════════ ACCOUNTS ═══════════════ */}
+      <section className="mt-10">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="h-7 w-1 rounded-full bg-gradient-to-b from-emerald-500 to-cyan-500" />
+          <h2 className="text-xl font-bold tracking-tight text-foreground dark:text-white">Your Accounts</h2>
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Add New Account */}
           <CreateAccountDrawer>
-            <div className="group relative rounded-2xl border-2 border-dashed border-border/60 dark:border-slate-700 hover:border-purple-400 dark:hover:border-purple-500 transition-all duration-300 cursor-pointer h-full min-h-[140px] flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/10 dark:to-pink-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative flex flex-col items-center gap-2 text-muted-foreground group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-200">
-                <div className="flex items-center justify-center h-10 w-10 rounded-full border-2 border-dashed border-current group-hover:bg-purple-100 dark:group-hover:bg-purple-900/30 transition-colors">
+            <div className="group relative rounded-2xl border-2 border-dashed border-border/50 dark:border-slate-700/60 hover:border-purple-400 dark:hover:border-purple-500 transition-all duration-300 cursor-pointer h-full min-h-[150px] flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-50/80 to-pink-50/80 dark:from-purple-900/10 dark:to-pink-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
+              <div className="relative flex flex-col items-center gap-3 text-muted-foreground group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-200">
+                <div className="flex items-center justify-center h-11 w-11 rounded-full border-2 border-dashed border-current group-hover:bg-purple-100 dark:group-hover:bg-purple-900/30 transition-colors">
                   <Plus className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
                 </div>
-                <p className="text-sm font-medium">Add New Account</p>
+                <p className="text-sm font-semibold">Add New Account</p>
               </div>
             </div>
           </CreateAccountDrawer>
@@ -134,7 +163,8 @@ const DashboardPage = async () => {
             <AccountCard key={account.id} account={account} userCurrency={user?.currency} />
           ))}
         </div>
-      </div>
+      </section>
+
     </div>
   );
 };
