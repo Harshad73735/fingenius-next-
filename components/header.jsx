@@ -49,8 +49,9 @@ const Header = async () => {
               </SignInButton>
             </SignedOut>
 
+            <ThemeToggleWrapper />
+
             <SignedIn>
-              <ThemeToggleWrapper />
               <UserButton 
                 appearance={{
                   elements: {
