@@ -1,10 +1,10 @@
 "use client";
-import { updateDefaultAccount } from '@/actions/accounts';
+import { updateDefaultAccount, deleteAccount } from '@/actions/accounts';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import useFetch from '@/hooks/use-fetch';
-import { ArrowDownRight, ArrowUpRight, TrendingUp, ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, TrendingUp, ArrowRight, Loader2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -13,6 +13,7 @@ import { formatCurrency } from '@/lib/currency';
 const AccountCard = ({ account, userCurrency }) => {
   const { name, type, balance, id, isDefault } = account;
   const [isNavigating, setIsNavigating] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const {
     loading: updateDefaultLoading,
@@ -21,6 +22,13 @@ const AccountCard = ({ account, userCurrency }) => {
     error,
   } = useFetch(updateDefaultAccount);
 
+  const {
+    loading: deleteLoading,
+    fn: deleteFn,
+    data: deleteResult,
+    error: deleteError,
+  } = useFetch(deleteAccount);
+
   const handleDefaultChange = async (event) => {
     event.preventDefault();
     if (isDefault) {
@@ -28,6 +36,12 @@ const AccountCard = ({ account, userCurrency }) => {
       return;
     }
     await updateDefaultFn(id);
+  };
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await deleteFn(id);
   };
 
   useEffect(() => {
@@ -41,6 +55,22 @@ const AccountCard = ({ account, userCurrency }) => {
       toast.error(error.message || "Failed to update default account");
     }
   }, [error]);
+
+  useEffect(() => {
+    if (deleteResult?.success) {
+      toast.success("Account deleted successfully");
+    } else if (deleteResult && !deleteResult.success) {
+      toast.error(deleteResult.error || "Failed to delete account");
+      setShowDeleteConfirm(false);
+    }
+  }, [deleteResult]);
+
+  useEffect(() => {
+    if (deleteError) {
+      toast.error(deleteError.message || "Failed to delete account");
+      setShowDeleteConfirm(false);
+    }
+  }, [deleteError]);
 
   // Distinct premium gradients for different account types
   const typeGradients = {
@@ -75,6 +105,38 @@ const AccountCard = ({ account, userCurrency }) => {
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors duration-500" />
       <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-black/10 rounded-full blur-xl group-hover:bg-black/20 transition-colors duration-500" />
 
+      {/* Delete Confirmation Overlay */}
+      {showDeleteConfirm && (
+        <div className="absolute inset-0 z-30 bg-black/80 backdrop-blur-sm rounded-[inherit] flex flex-col items-center justify-center gap-3 p-5">
+          <p className="text-sm font-semibold text-white text-center">
+            Delete "{name}" account?
+          </p>
+          <p className="text-xs text-white/70 text-center">
+            All transactions in this account will also be deleted.
+          </p>
+          <div className="flex gap-2 mt-1">
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowDeleteConfirm(false); }}
+              className="px-3 py-1.5 text-xs font-medium bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-white"
+              disabled={deleteLoading}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 rounded-lg transition-colors text-white flex items-center gap-1.5"
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? (
+                <><Loader2 className="h-3 w-3 animate-spin" /> Deleting...</>
+              ) : (
+                <><Trash2 className="h-3 w-3" /> Delete</>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Card Content ── */}
       <div className="relative z-10 p-5 flex flex-col h-full grow">
         <div className="flex justify-between items-start mb-4">
@@ -94,7 +156,18 @@ const AccountCard = ({ account, userCurrency }) => {
               </Badge>
             )}
             
-            {/* The switch (click stops propagation automatically if handled carefully, but Card doesn't have onClick, Link does) */}
+            {/* Delete button */}
+            <div onClick={(e) => e.preventDefault()} className="z-20 relative">
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowDeleteConfirm(true); }}
+                className="flex items-center justify-center h-7 w-7 rounded-lg bg-white/15 hover:bg-red-500/80 transition-colors duration-200"
+                title="Delete account"
+              >
+                <Trash2 className="h-3.5 w-3.5 text-white" />
+              </button>
+            </div>
+
+            {/* The switch */}
             <div onClick={(e) => e.preventDefault()} className="z-20 relative">
               <Switch
                 checked={isDefault}

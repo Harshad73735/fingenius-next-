@@ -74,7 +74,7 @@ async function BudgetSection({ defaultAccount, userCurrency }) {
 }
 
 async function OverviewSection({ accounts, userCurrency }) {
-  const transactions = await getDashboardData(20);
+  const transactions = await getDashboardData(200);
   return <DashboardOverview accounts={accounts} transactions={transactions || []} userCurrency={userCurrency} />;
 }
 

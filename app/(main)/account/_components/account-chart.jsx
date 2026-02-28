@@ -66,7 +66,7 @@ const AccountChart = ({ transactions, userCurrency }) => {
   const net = totals.income - totals.expense;
 
   return (
-    <Card className="rounded-2xl border border-border/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-sm">
+    <Card className="rounded-2xl border border-border/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900 backdrop-blur-md shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle className="text-base font-semibold text-foreground dark:text-white">
           Transaction Overview
@@ -129,21 +129,21 @@ const AccountChart = ({ transactions, userCurrency }) => {
           <div className="h-[240px] sm:h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={filteredData} margin={{ top: 5, right: 5, left: -10, bottom: 0 }} barSize={16} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.5} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148,163,184,0.3)" />
                 <XAxis
                   dataKey="date"
                   tickLine={false}
                   axisLine={false}
-                  style={{ fontSize: "11px", fill: "hsl(var(--muted-foreground))" }}
+                  tick={{ fontSize: 11, fill: '#94a3b8' }}
                   interval="preserveStartEnd"
                 />
                 <YAxis
                   tickLine={false}
                   axisLine={false}
-                  style={{ fontSize: "11px", fill: "hsl(var(--muted-foreground))" }}
+                  tick={{ fontSize: 11, fill: '#94a3b8' }}
                   tickFormatter={(v) => formatCurrency(v, userCurrency).replace(/\.00$/, '')}
                 />
-                <Tooltip content={<CustomTooltip userCurrency={userCurrency} />} cursor={{ fill: "hsl(var(--muted))", opacity: 0.5, radius: 6 }} />
+                <Tooltip content={<CustomTooltip userCurrency={userCurrency} />} cursor={{ fill: 'rgba(148,163,184,0.15)', radius: 6 }} />
                 <Bar dataKey="income" name="Income" fill="#10b981" radius={[6, 6, 2, 2]} />
                 <Bar dataKey="expense" name="Expense" fill="#f43f5e" radius={[6, 6, 2, 2]} />
               </BarChart>

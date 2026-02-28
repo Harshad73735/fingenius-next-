@@ -54,7 +54,7 @@ const DashboardOverview = ({ accounts, transactions, userCurrency }) => {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {/* ── Recent Transactions ── */}
-      <Card className="w-full relative overflow-hidden">
+      <Card className="w-full relative overflow-hidden bg-white dark:bg-slate-900 dark:border-slate-700/50">
         <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-0 pb-3 gap-4 sm:gap-0">
           <div className="flex items-center gap-2">
             <LayoutList className="h-4 w-4 text-purple-500" />
@@ -149,7 +149,7 @@ const DashboardOverview = ({ accounts, transactions, userCurrency }) => {
       </Card>
 
       {/* ── Monthly Expense Breakdown ── */}
-      <Card className="pb-2 w-full relative overflow-hidden">
+      <Card className="pb-2 w-full relative overflow-hidden bg-white dark:bg-slate-900 dark:border-slate-700/50">
         <CardHeader className="pb-3 flex flex-col items-start gap-1 w-full">
           <div className="flex items-center gap-2 w-full">
             <PieChartIcon className="h-4 w-4 text-pink-500 shrink-0" />

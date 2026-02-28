@@ -52,13 +52,15 @@ const Header = async () => {
             <ThemeToggleWrapper />
 
             <SignedIn>
-              <UserButton 
-                appearance={{
-                  elements: {
-                    avatarBox: "w-8 h-8 sm:w-10 sm:h-10",
-                  },
-                }}
-              />
+              <div suppressHydrationWarning>
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8 sm:w-10 sm:h-10",
+                    },
+                  }}
+                />
+              </div>
             </SignedIn>
           </div>
         </nav>

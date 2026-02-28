@@ -11,12 +11,16 @@ import { Switch } from './ui/switch';
 import { Button } from './ui/button';
 import useFetch from '@/hooks/use-fetch';
 import { createAccount } from '@/actions/dashboard';
-import { Loader2 } from 'lucide-react';
+import { seedAccountData } from '@/actions/seed';
+import { Loader2, Database } from 'lucide-react';
 import { toast } from 'sonner';
 
 
 const CreateAccountDrawer = ({children}) => {
  const [open, setOpen] = useState(false);
+ const [seedData, setSeedData] = useState(false);
+ const [isSeeding, setIsSeeding] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -46,10 +50,35 @@ const CreateAccountDrawer = ({children}) => {
   };
 
   useEffect(() => {
-    if (newAccount  && !createAccountLoading) {
-      toast.success("Account created successfully");
-      reset();
-      setOpen(false);
+    if (newAccount && !createAccountLoading) {
+      // If seed data is enabled, seed the account
+      if (seedData && newAccount.data?.id) {
+        setIsSeeding(true);
+        seedAccountData(newAccount.data.id)
+          .then((result) => {
+            if (result.success) {
+              toast.success("Account created & demo data seeded!");
+            } else {
+              toast.success("Account created!");
+              toast.error("Failed to seed demo data: " + (result.error || ""));
+            }
+          })
+          .catch(() => {
+            toast.success("Account created!");
+            toast.error("Failed to seed demo data");
+          })
+          .finally(() => {
+            setIsSeeding(false);
+            reset();
+            setSeedData(false);
+            setOpen(false);
+          });
+      } else {
+        toast.success("Account created successfully");
+        reset();
+        setSeedData(false);
+        setOpen(false);
+      }
     }
   }, [newAccount, reset]);
 
@@ -58,6 +87,8 @@ const CreateAccountDrawer = ({children}) => {
       toast.error(error.message || "Failed to create account");
     }
   }, [error]);
+
+  const isLoading = createAccountLoading || isSeeding;
 
   return (
      <Drawer open={open} onOpenChange={setOpen}>
@@ -149,9 +180,31 @@ const CreateAccountDrawer = ({children}) => {
               />
             </div>
 
+            {/* Seed Demo Data Toggle */}
+            <div className="flex items-center justify-between rounded-lg border p-3 border-purple-200 dark:border-purple-800/50 bg-purple-50/50 dark:bg-purple-900/20">
+              <div className="space-y-0.5">
+                <label
+                  htmlFor="seedData"
+                  className="text-base font-medium cursor-pointer text-foreground dark:text-white flex items-center gap-2"
+                >
+                  <Database className="h-4 w-4 text-purple-500" />
+                  Seed Demo Data
+                </label>
+                <p className="text-sm text-muted-foreground dark:text-slate-400">
+                  Add 2 months of sample college student transactions (₹10k/month)
+                </p>
+              </div>
+              <Switch
+                id="seedData"
+                checked={seedData}
+                onCheckedChange={setSeedData}
+                className="data-[state=checked]:bg-purple-600"
+              />
+            </div>
+
             <div className="flex gap-4 pt-4">
               <DrawerClose asChild>
-                <Button type="button" variant="outline" className="flex-1">
+                <Button type="button" variant="outline" className="flex-1" disabled={isLoading}>
                   Cancel
                 </Button>
               </DrawerClose>
@@ -159,12 +212,12 @@ const CreateAccountDrawer = ({children}) => {
               <Button
                 type="submit"
                 className="flex-1"
-                disabled={createAccountLoading}
+                disabled={isLoading}
               >
-                {createAccountLoading ? (
+                {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
+                    {isSeeding ? "Seeding data..." : "Creating..."}
                   </>
                 ) : (
                   "Create Account"

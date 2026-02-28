@@ -210,3 +210,34 @@ export async function updateUserProfile({ email, name, currency }) {
     return { success: false, error: error.message };
   }
 }
+
+export async function deleteAccount(accountId) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    // Find the account and verify ownership
+    const account = await db.account.findUnique({
+      where: { id: accountId, userId: user.id },
+    });
+
+    if (!account) throw new Error("Account not found");
+
+    // Delete the account (cascade will remove all associated transactions)
+    await db.account.delete({
+      where: { id: accountId },
+    });
+
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (error) {
+    console.error("[deleteAccount] Error:", error.message);
+    return { success: false, error: error.message };
+  }
+}

@@ -44,7 +44,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses, userCurrency }) => {
   }, [error]);
 
   return (
-    <Card className="border border-border/50 dark:border-slate-700/50 shadow-sm dark:bg-slate-800/40 overflow-hidden">
+    <Card className="border border-border/50 dark:border-slate-700/50 shadow-sm dark:bg-slate-900 overflow-hidden">
       {/* Top status stripe */}
       {isOver && <div className="h-1 w-full bg-gradient-to-r from-red-500 to-rose-600" />}
       {isWarning && <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-orange-500" />}
@@ -116,7 +116,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses, userCurrency }) => {
               </div>
               <div className="text-right">
                 <p className={`text-base font-semibold tabular-nums ${isOver ? "text-rose-500" : "text-emerald-600 dark:text-emerald-400"}`}>
-                  {isOver ? `${formatCurrency(Math.abs(remaining), userCurrency)} over` : `-${formatCurrency(remaining, userCurrency)}`}
+                  {isOver ? `${formatCurrency(Math.abs(remaining), userCurrency)} over` : `${formatCurrency(remaining, userCurrency)} left`}
                 </p>
                 <p className="text-xs text-muted-foreground">{isOver ? "over budget" : "remaining"}</p>
               </div>
