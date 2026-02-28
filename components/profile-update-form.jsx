@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import useFetch from "@/hooks/use-fetch";
 import { SUPPORTED_CURRENCIES } from "@/lib/currency";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Globe, Settings, X, Mail, UserCircle } from "lucide-react";
+import { User, Globe, Settings, X, Mail, UserCircle, Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
@@ -65,18 +65,22 @@ export const ProfileUpdateForm = ({ userData }) => {
         </div>
       )}
 
-      {/* Modal / Form */}
+      {/* Modal Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center" onClick={() => setIsOpen(false)}>
-          <div 
-            className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-700/50 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md max-h-[85vh] overflow-y-auto"
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setIsOpen(false)}
+        >
+          {/* Modal Card */}
+          <div
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-5 pb-0">
-              <div className="flex items-center gap-2.5">
-                <div className="flex items-center justify-center h-9 w-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-md">
-                  <Settings className="h-4.5 w-4.5 text-white" />
+            {/* ── Header ── */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-md">
+                  <Settings className="h-5 w-5 text-white" />
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-foreground dark:text-white">Preferences</h2>
@@ -85,57 +89,57 @@ export const ProfileUpdateForm = ({ userData }) => {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center h-8 w-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-muted-foreground hover:text-foreground dark:hover:text-white"
+                className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-muted-foreground hover:text-foreground dark:hover:text-white"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="p-5 space-y-4">
-              {/* Name Field */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-foreground dark:text-slate-200 flex items-center gap-1.5">
-                  <UserCircle className="h-3.5 w-3.5 text-purple-500" />
-                  Name
+            {/* ── Form ── */}
+            <form onSubmit={handleSubmit} className="px-6 py-5 space-y-5">
+              {/* Name */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground dark:text-slate-200 flex items-center gap-2">
+                  <UserCircle className="h-4 w-4 text-purple-500" />
+                  Full Name
                 </label>
                 <Input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
+                  placeholder="Enter your full name"
                   required
-                  className="dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500 focus-visible:ring-purple-500"
+                  className="h-11"
                 />
               </div>
 
-              {/* Email Field */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-foreground dark:text-slate-200 flex items-center gap-1.5">
-                  <Mail className="h-3.5 w-3.5 text-purple-500" />
-                  Email
+              {/* Email */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground dark:text-slate-200 flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-purple-500" />
+                  Email Address
                 </label>
                 <Input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
+                  placeholder="Enter your email address"
                   required
-                  className="dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500 focus-visible:ring-purple-500"
+                  className="h-11"
                 />
               </div>
 
-              {/* Currency Field */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-foreground dark:text-slate-200 flex items-center gap-1.5">
-                  <Globe className="h-3.5 w-3.5 text-purple-500" />
+              {/* Currency */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground dark:text-slate-200 flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-purple-500" />
                   Default Currency
                 </label>
                 <Select value={currency} onValueChange={setCurrency}>
-                  <SelectTrigger className="w-full dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:ring-purple-500">
+                  <SelectTrigger className="w-full h-11 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                     <SelectValue placeholder="Select Currency" />
                   </SelectTrigger>
-                  <SelectContent position="popper" side="top" className="max-h-[200px] dark:bg-slate-800 dark:border-slate-700">
+                  <SelectContent position="popper" className="max-h-[240px] dark:bg-slate-800 dark:border-slate-700">
                     {SUPPORTED_CURRENCIES.map((c) => (
                       <SelectItem key={c.code} value={c.code} className="dark:text-slate-200 dark:focus:bg-slate-700">
                         {c.code} ({c.symbol}) - {c.name}
@@ -145,23 +149,30 @@ export const ProfileUpdateForm = ({ userData }) => {
                 </Select>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-3 justify-end pt-3 border-t border-border/50 dark:border-slate-700/50">
+              {/* ── Action Buttons ── */}
+              <div className="flex gap-3 justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsOpen(false)}
                   disabled={loading}
-                  className="dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                  className="px-5 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md"
+                  className="px-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md"
                 >
-                  {loading ? "Saving..." : "Save Changes"}
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
                 </Button>
               </div>
             </form>

@@ -57,8 +57,11 @@ export async function getCurrentBudget(accountId) {
       ? expenses._sum.amount.toNumber()
       : 0;
 
-    // Check if budget is exceeded and send alert
-    if (budget && currentExpenses > budget.amount.toNumber()) {
+    // Check if budget is at 90% or exceeded and send alert
+    const budgetAmount = budget ? budget.amount.toNumber() : 0;
+    const percentUsed = budgetAmount > 0 ? (currentExpenses / budgetAmount) * 100 : 0;
+
+    if (budget && percentUsed >= 90) {
       console.log("[Budget Alert] Expenses exceeded budget:", {
         budgetAmount: budget.amount.toNumber(),
         currentExpenses,
