@@ -2,6 +2,8 @@ import { getUserAccounts, getDashboardData } from '@/actions/dashboard';
 import CreateAccountDrawer from '@/components/create-account-drawer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Plus } from 'lucide-react';
+
+export const dynamic = "force-dynamic";
 import React, { Suspense } from 'react';
 import AccountCard from './_components/account-card';
 import { getCurrentBudget } from '@/actions/budget';
