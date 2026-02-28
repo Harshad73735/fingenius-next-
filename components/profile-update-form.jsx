@@ -125,8 +125,8 @@ export const ProfileUpdateForm = ({ userData }) => {
                       Full Name <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <User className="h-4 w-4 text-slate-400" />
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                        <User className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                       </div>
                       <Input
                         type="text"
@@ -134,7 +134,7 @@ export const ProfileUpdateForm = ({ userData }) => {
                         onChange={(e) => setName(e.target.value)}
                         placeholder="John Doe"
                         required
-                        className="pl-11 text-base sm:text-sm bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/60 focus:bg-white dark:focus:bg-slate-900 transition-colors h-11"
+                        className="pl-9 text-base sm:text-sm bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/60 focus:bg-white dark:focus:bg-slate-900 transition-colors h-11"
                       />
                     </div>
                   </div>
@@ -144,8 +144,8 @@ export const ProfileUpdateForm = ({ userData }) => {
                       Email Address <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <Mail className="h-4 w-4 text-slate-400" />
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                        <Mail className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                       </div>
                       <Input
                         type="email"
@@ -153,7 +153,7 @@ export const ProfileUpdateForm = ({ userData }) => {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="john@example.com"
                         required
-                        className="pl-11 text-base sm:text-sm bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/60 focus:bg-white dark:focus:bg-slate-900 transition-colors h-11"
+                        className="pl-9 text-base sm:text-sm bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/60 focus:bg-white dark:focus:bg-slate-900 transition-colors h-11"
                       />
                     </div>
                   </div>
