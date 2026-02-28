@@ -15,7 +15,7 @@ const Header = async () => {
         <nav className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between w-full max-w-full">
           <Link href="/" className="shrink-0 mr-1 sm:mr-4">
             <Image 
-              src={"/logo.png"} 
+              src={"/logo.svg"} 
               alt="FinGenius Logo" 
               height={60} 
               width={200} 
