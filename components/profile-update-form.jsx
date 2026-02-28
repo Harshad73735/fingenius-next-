@@ -110,7 +110,7 @@ export const ProfileUpdateForm = ({ userData }) => {
             </div>
 
             {/* ── Form ── */}
-            <form onSubmit={handleSubmit} className="px-6 py-6 space-y-8">
+            <form onSubmit={handleSubmit} className="px-6 py-6 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
               
               {/* Profile Details Section */}
               <div className="space-y-4">
